@@ -47,4 +47,4 @@ buck-out/
 
 #Others
 /.vscode
-/_tests_
+/__tests__
