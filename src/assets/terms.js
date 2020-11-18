@@ -1,0 +1,61 @@
+import * as React from 'react';
+import { ScrollView, View, Text } from 'react-native';
+import { DynamicStyleSheet, useDynamicStyleSheet } from 'react-native-dark-mode';
+import styles from './styles';
+import Indexed from './indexed';
+import Subheader from './Subheader';
+import ContactUs from './contactstrip';
+
+const Terms = () => {
+    const style = useDynamicStyleSheet(new DynamicStyleSheet(styles));
+    return (
+        <ScrollView style={style.root}>
+            <Text style={style.heading}>FlashGrab Terms Of Use</Text>
+            <View style={[style.paragraph, { marginBottom: 5, marginTop: 0 }]}>
+                <Text style={style.texts}>Welcome to FlashGrab!</Text>
+                <Text style={style.texts}>These terms of use govern your usage of the app and provide information about the FlashGrab service, outlined below.</Text>
+            </View>
+            <Subheader text="Accepting the terms" />
+            <Indexed index="•" text=" When you start using FlashGrab, you automatically agree to the terms. You may not use the service if you don't agree to the terms." />
+            <Indexed index="•" text="You may not accept the terms and/or use the service if you are a person who is either barred or otherwise legally prohibited from using FlashGrab by the laws of the country you are resident in or from which you access and/or use the service." />
+            <Indexed index="•" text=" You must be over 13 years old to use the service" />
+            <Subheader text="Conduct Rules" />
+            <View style={style.paragraph}>
+                <Text style={style.texts}>You agree not to use the service:</Text>
+            </View>
+            <Indexed index="•" text="to obtain and/or attempt to obtain unauthorized access into FlashGrab servers, network and/or data." />
+            <Indexed index="•" text="to violate any applicable laws and regulations." />
+            <Indexed index="•" text="to try and/or slow down third party services such as Amazon & Flipkart unnecessarily." />
+            <Subheader text="Termination Rights" />
+            <View style={style.paragraph}>
+                <Text style={style.texts}>On becoming aware of any potential violation of these terms, FlashGrab reserves the right (but shall have no obligation)  to remove the user's access to the service, without prior notice and at it's sole discretion.</Text>
+            </View>
+            <Subheader text="Governing Law & Venue" />
+            <View style={style.paragraph}>
+                <Text style={style.texts}>Under any circumstances, when any issues or disputes arise with FlashGrab:</Text>
+            </View>
+            <Indexed index="•" text='you hereby agree that you will first try to raise and solve it with FlashGrab by sending an email to 321vishalds@gmail.com or by using alternate contact methods available through our website.' />
+            <Indexed index="•" text="all the claims arising out of or relating to these Terms or service will be governed by the Indian law." />
+            <Subheader text="Warranty Disclaimer" />
+            <View style={style.paragraph}>
+                <Text style={style.texts}>      While we work hard to make the best possible flash sale purchase experience for you, our service is provided "as is" and we make no guarantee that this service will always be safe, secure, error-free or that it will function without disruptions, delays or imperfections. To the extent permitted by law, we also DISCLAIM ALL WARRANTIES, WHETHER EXPRESS OR IMPLIED, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, TITLE & NON-INFRINGEMENT.</Text>
+                <Text style={style.texts}>      We cannot predict when issues might arise with FlashGrab. Henceforth, our liability shall be limited to the fullest extent permitted by applicable law, and under no circumstances will be liable to you for any lost profits, money, revenue, potential savings, information or data, even if we have been advised of the possibility of such damages. Our aggregate liability arising out of these terms or the FlashGrab service will not exceed a maximum of ₹500/- or any amount that you have donated to the developer in the past 6 months.</Text>
+                <Text style={style.texts}>Your flash sale purchases may fail due to a number of reasons ranging from an incorrect username to your debit card being blocked by your bank due to other reasons. We are also not liable for any issues and/or disputes arising related to a purchase failing. As mentioned before, you agree to contact and try solving the issue first before reporting to law enforcement authorities or entities.</Text>
+            </View>
+            <ContactUs />
+            <View style={style.paragraph}>
+                <Text style={style.texts}>      FlashGrab welcomes comments, queries or suggestions. You can get help by using the contact form on our website, calling to +91 9074775013 (only English and Malayalam available) or sending an email to 321vishalds@gmail.com.</Text>
+            </View>
+            <Subheader text="Third-Party Services" />
+            <View style={style.paragraph}>
+                <Text style={style.texts}>      FlashGrab is not designed to pose any security threats to third party services like Amazon and/or Flipkart with whom our servers engage indirectly to run this service. Henceforth, we do not and will not attempt to bypass security protocols like 2 factor authentication account logins in any of these services. Any purchase scheduled to take place using an account with 2 factor authentication enabled will instantly fail and we do not bear any responsibility for the same. We also do not and will not attempt to enter the OTP in unsupported bank websites during purchase. The system will create a payment pending order in your account and quit purchasing.</Text>
+            </View>
+            <View style={[style.paragraph, { marginBottom: 10 }]}>
+                <Text style={style.texts}>      We assume that you have read and agreed to all the above mentioned Terms & Conditions before purchasing using FlashGrab.</Text>
+                <View style={{ alignSelf: "center" }}><Text style={style.texts}>Happy FlashGrabbing!!</Text></View>
+            </View>
+        </ScrollView>
+    );
+}
+
+export default Terms;
