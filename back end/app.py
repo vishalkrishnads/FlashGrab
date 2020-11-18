@@ -1,4 +1,3 @@
-from copy import Error
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -11,7 +10,7 @@ global wbsocket, driver
 # No messages will be sent to phone after "Trying method of Login" for Flipkart
 
 # error thrown when something goes wrong and sale is gonna abort
-class Abort(Error):
+class Abort(Exception):
     pass
 
 # function to send messages to the client
@@ -19,7 +18,7 @@ async def status(message):
     try:
         await asyncio.wait([wbsocket.send(message)])
     except:
-        raise Abort
+        raise Abort()
 
 # function for submitting OTP. Common for both sellers.
 def otp_submit(seller, OTP):
@@ -101,7 +100,7 @@ class Flipkart:
                 time.sleep(2)
                 if('Login' in driver.page_source):
                     await status('Incorrect account details')
-                    raise Abort
+                    raise Abort()
                 else:
                     await status('Logged In')
                     return
@@ -126,13 +125,13 @@ class Flipkart:
                 time.sleep(2)
                 if('Login' in driver.page_source):
                     await status('Incorrect account details')
-                    raise Abort
+                    raise Abort()
                 else:
                     await status('Logged In')
         except:
             await status('Error in logging in.')
             time.sleep(1)
-            raise Abort
+            raise Abort()
 
     async def buy(item, repeat):
         try:
@@ -162,7 +161,7 @@ class Flipkart:
                 await Flipkart.buy(item, False)
             await status("Most likely, no seller ships to your saved PIN code.")
             time.sleep(3)
-            raise Abort
+            raise Abort()
 
     async def buy_recheck(repeat):
         try:
@@ -178,7 +177,7 @@ class Flipkart:
             time.sleep(2)
             await status('Most likely, no seller ships to your saved address')
             time.sleep(3)
-            raise Abort
+            raise Abort()
     
     async def order_summary(repeat):
         await status('Reached ORDER SUMMARY section')
@@ -192,7 +191,7 @@ class Flipkart:
                 await Flipkart.order_summary(False)
             await status('Seems like you have more than one saved address')
             time.sleep(5)
-            raise Abort
+            raise Abort()
 
     async def payment(item, repeat):
         try:
@@ -210,7 +209,7 @@ class Flipkart:
                 await Flipkart.payment(item, False)
             await status('You might have more than one saved cards')
             time.sleep(5)
-            raise Abort
+            raise Abort()
 
     async def payment_continue(repeat):
         try:
@@ -222,7 +221,7 @@ class Flipkart:
                 await Flipkart.payment_continue(False)
             await status('CONTINUE button is inactive')
             time.sleep(5)
-            raise Abort
+            raise Abort()
 
 # Amazon function
 class Amazon:
@@ -253,7 +252,7 @@ class Amazon:
             if 'There was a problem' in driver.page_source:
                 await status('Incorrect email address')
                 time.sleep(3)
-                raise Abort
+                raise Abort()
             await status('Entered username')
             driver.find_element_by_id("ap_password").send_keys(item.password)
             driver.find_element_by_id("signInSubmit").click()
@@ -261,13 +260,13 @@ class Amazon:
             if 'Your password is incorrect' in driver.page_source:
                 await status('Incorrect password')
                 time.sleep(3)
-                raise Abort (True)
+                raise Abort()
             await status('Entered password')
             time.sleep(2)
             if driver.title == "Two-Step Verification":
                 await status('2 step verification is active for this account')
                 time.sleep(3)
-                raise Abort
+                raise Abort()
             else:
                 await status('Logged in successfully')
         except:
@@ -275,7 +274,7 @@ class Amazon:
                 await Amazon.login(False)
             await status('Unknown error in login')
             time.sleep(2)
-            raise Abort
+            raise Abort()
 
     async def buy(repeat):
         try:
@@ -293,7 +292,7 @@ class Amazon:
                 await status("Error. Retrying")
                 await Amazon.buy(False)
             await status('An unknown error occured')
-            raise Abort
+            raise Abort()
 
     async def payment(item, repeat):
         try:
@@ -307,14 +306,14 @@ class Amazon:
             if "Some items in your order are not deliverable to the selected address." in driver.page_source:
                 await status("Seller doesn't ship to your address")
                 time.sleep(5)
-                raise Abort(item, True)
+                raise Abort()
             if repeat:
                 await status('Retrying')
                 await Amazon.payment(item, False)
             else:
                 await status('You might have more than one saved cards')
                 time.sleep(5)
-                raise Abort
+                raise Abort()
 
     async def prime(repeat):
         try:
@@ -333,14 +332,14 @@ class Amazon:
                 await Amazon.prime(False)
             await status('An unknown error occured')
             time.sleep(5)
-            raise Abort
+            raise Abort()
     
     async def payment_continue():
         try:
             driver.find_element_by_xpath('//input[@name="placeYourOrder1"]').click()
         except:
             await status('No Place Order button')
-            raise Abort
+            raise Abort()
 
     async def duplicate():
         try:
@@ -353,7 +352,7 @@ class Amazon:
                 pass
         except:
             await status("An unknown error occured")
-            raise Abort
+            raise Abort()
 
 # main funtion that accepts messages from client via websocket connection
 async def recieve_messages(websocket, path):
@@ -365,7 +364,7 @@ async def recieve_messages(websocket, path):
             details = await wbsocket.recv()
             data = json.loads(details)
         except:
-            raise Abort
+            raise Abort()
         driver = webdriver.Chrome('./chromedriver')
         driver.maximize_window()
         await status("Opening your link using Google Chrome in server")
@@ -381,7 +380,7 @@ async def recieve_messages(websocket, path):
             #after this, no websocket statements will work
             data = json.loads(details)
         except:
-            raise Abort
+            raise Abort()
         otp_submit(data["seller"], data["otp"])
     except Abort:
         await wbsocket.send("Sorry. Purchase has failed.")
