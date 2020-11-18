@@ -162,7 +162,7 @@ If issues still persist after following the instructions and trying these possib
 
 ## Support
 I'm a very young developer with less knowledge and experience. It would be great if you could:
- * help me optimize the code
+ * help me optimize the code, especially back end
  * help add new features and fix bugs that may arise
  * spread the word about the app and it's open and transparent nature
  * help reduce the natural shady doubts that people have about the app handling their sensitive data
