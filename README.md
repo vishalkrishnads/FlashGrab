@@ -138,11 +138,16 @@ If issues still persist after following the instructions and trying these possib
 
 * A weird dependency conflict in the modules `react-native-fs` and `react-native-dark-mode` make all `npm install` commands crash. I'm not able to fix this for now. Instead, use the script `installer.sh ` for installing modules.
   * In the project directory, give read permissions to the file
+
   ```
   chmod +x installer.sh
   ```
 
   * Run the file and follow the on-screen instructions to install any modules from now on.
+
+  ```
+  ./installer.sh
+  ```
 
 ## Directory Structure
   ```
