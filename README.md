@@ -134,6 +134,16 @@ Now, when you start a sale in the app, it should open up Google Chrome and start
    
 If issues still persist after following the instructions and trying these possibles fixes, feel free to open an issue in this repo with a detailed description of the trouble you're facing.
 
+### Issues in development
+
+* A weird dependency conflict in the modules `react-native-fs` and `react-native-dark-mode` make all `npm install` commands crash. I'm not able to fix this for now. Instead, use the script `installer.sh ` for installing modules.
+  * In the project directory, give read permissions to the file
+  ```
+  chmod +x installer.sh
+  ```
+
+  * Run the file and follow the on-screen instructions to install any modules from now on.
+
 ## Directory Structure
   ```
   |
