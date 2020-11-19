@@ -51,3 +51,4 @@ buck-out/
 /backups
 /back end/debug.log
 /back end/test.py
+/back end/backup.py
