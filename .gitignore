@@ -50,3 +50,4 @@ buck-out/
 /__tests__
 /backups
 /back end/debug.log
+/back end/test.py
