@@ -19,10 +19,10 @@ then
     mv installer/build.gradle android/
     printf "\nDone.\n"
     printf "\nInstalling node modules. Please wait."
+    # comment line 22 if you're using this script on Windows with WSL
+    # and run npm install package.json from cmd
     npm install package.json
     printf "\nDone.\n"
-    # uncomment this line and comment line 22 if you're using this script on Windows with WSL
-    # npm install @react-native-community/clipboard @react-native-community/datetimepicker @react-native-community/masked-view @react-native-community/netinfo @react-navigation/bottom-tabs@5.9.1 @react-navigation/native@5.7.5 @react-navigation/stack@5.9.2 dom-parser moment react-native-android-open-settings react-native-elements react-native-fingerprint-scanner react-native-gesture-handler react-native-keep-awake react-native-material-textfield react-native-modal-datetime-picker react-native-progress react-native-push-notification react-native-reanimated react-native-safe-area-context react-native-screens react-native-share-menu react-native-sqlite-storage react-native-swipeout
     printf "\nDownloading the problematic modules from GitHub. This might take a while...\n"
     git clone https://github.com/Flashgrab/modules.git
     printf "Done.\n"
