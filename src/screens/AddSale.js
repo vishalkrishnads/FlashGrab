@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, ScrollView, Keyboard, Image, PushNotificationIOS, Linking, SafeAreaView, Alert, Vibration, Dimensions } from 'react-native';
+import { View, Text, ScrollView, Keyboard, Image, SafeAreaView, Alert, Vibration, Dimensions } from 'react-native';
 import { Button, Icon } from 'react-native-elements';
 import { TextField } from 'react-native-material-textfield';
 import { openDatabase } from 'react-native-sqlite-storage';
