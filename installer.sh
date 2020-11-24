@@ -29,12 +29,9 @@ then
     printf "Done.\n"
     printf "\nMoving the modules to node_modules. This might take a while too.."
     mv modules/react-native-dark-mode node_modules/
-    printf "\n(1/2) complete. Please wait."
-    mv modules/react-native-fs/ node_modules/
-    printf "\n(2/2) complete. Done.\n"
+    printf "\n(1/1) complete."
     printf "\nUpdating package.json"
     sed -i '25i\    "react-native-dark-mode": "^0.2.2",' package.json
-    sed -i '25i\    "react-native-fs": "^2.16.6",' package.json
     npx react-native link react-native-vector-icons
     printf "\nDone.\n"
     printf "\nCleaning Up"

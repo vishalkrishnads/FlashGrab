@@ -31,10 +31,7 @@ then
     echo "Done."
     echo "Copying the modules back to node_modules/. This might take a while."
     cp -R backups/react-native-dark-mode node_modules/
-    echo "(1/2) complete. Please wait."
-    cp -R backups/react-native-fs node_modules/
-    echo "(2/2) complete. Done."
-
+    echo "(1/1) complete."
     echo "Finished. Your new module is now ready for use"
 else
     echo "\nThere is no backups folder. Maybe you're running this for the first time."
