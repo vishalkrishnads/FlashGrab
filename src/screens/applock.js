@@ -4,6 +4,7 @@ import { Icon, Button } from 'react-native-elements';
 import { TextField } from 'react-native-material-textfield';
 import { useDarkMode, DynamicStyleSheet, useDynamicStyleSheet } from 'react-native-dark-mode';
 import FingerprintScanner from 'react-native-fingerprint-scanner';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import styles from '../assets/styles'
 
 //somehow, both react-native-config react-native-link don't seem to work.
@@ -13,7 +14,6 @@ import styles from '../assets/styles'
 //We have an open issue. Once this is fixed, will push an update. 
 
 const applock = ({ navigation }) => {
-    var RNFS = require('react-native-fs');
     const isDarkMode = useDarkMode();
     let [fingerprint_status, setState] = React.useState(false);
     let [pin1, setpin1] = React.useState('');
@@ -62,7 +62,7 @@ const applock = ({ navigation }) => {
     }
 
     //function sets the new PIN lock.
-    const savePIN = () => {
+    const savePIN = async() => {
         Keyboard.dismiss();
         //run basic checks
         if (!pin1 || !pin2) {
@@ -80,47 +80,40 @@ const applock = ({ navigation }) => {
             setError("PIN's don't match")
             return;
         }
-        //we open a file lock.txt and write the PIN into it.
-        var path = RNFS.DocumentDirectoryPath + '/lock.txt';
-        RNFS.writeFile(path, pin2, 'utf8')
-            .then()
-            //just to know any errors...
-            .catch((err) => { console.log(err.message); });
+        await AsyncStorage.setItem('@pin', pin2);
         setPIN(previousState => !previousState);
         showSeeker(false);
         setStatus("PIN Lock enabled");
     }
 
     //function runs on toggling the switch "PIN Lock"
-    const PIN = () => {
+    const PIN = async() => {
         if (pin === false) {
             showSeeker(true);
         } else if (pin === true) {
-            //if app lock is currently enabled, delete the file and
-            return RNFS.unlink(RNFS.DocumentDirectoryPath + '/lock.txt')
-                .then(() => {
-                    showSeeker(false);
-                    setPIN(previousState => !previousState);
-                    setStatus("All locks are currently disabled");
-                    //yes, you could call fingerprint() directly to switch it OFF
-                    //but some weird combinations actually switch it back ON if it's OFF
-                    //we can safely bet on this one though.
-                    if (fingerprint_status === true) {
-                        setState(previousState => !previousState);
-                        return RNFS.unlink(RNFS.DocumentDirectoryPath + '/Fingerprint.txt');
-                    }
-                })
+            await AsyncStorage.removeItem('@pin').then(async()=>{
+                showSeeker(false);
+                setPIN(previousState => !previousState);
+                setStatus("All locks are currently disabled");
+                //yes, you could call fingerprint() directly to switch it OFF
+                //but some weird combinations actually switch it back ON if it's OFF
+                //we can safely bet on this one though.
+                if (fingerprint_status === true) {
+                    setState(previousState => !previousState);
+                    await AsyncStorage.removeItem('@fingerprint');
+                }
+            })
         }
     }
 
     //function runs on toggling the switch "Fingerprint Lock"
-    const fingerprint = () => {
+    const fingerprint = async() => {
         if (availability === false) { return; }
         if (fingerprint_status == true) {
             setState(previousState => !previousState);
             setStatus("Fingerprint lock disabled");
-            return RNFS.unlink(RNFS.DocumentDirectoryPath + '/Fingerprint.txt')
-                .then(() => { })
+            await AsyncStorage.removeItem('@fingerprint').then(()=>setStatus("Fingerprint lock disabled"));
+            return;
         } else if (fingerprint_status == false) {
             if (pin === false) {
                 setStatus("Set a backup PIN to use fingerprint");
@@ -128,44 +121,33 @@ const applock = ({ navigation }) => {
                 return;
             } else {
                 setState(previousState => !previousState);
-                var path = RNFS.DocumentDirectoryPath + '/Fingerprint.txt';
-                RNFS.writeFile(path, " ", 'utf8')
-                    .then(() => { })
-                    .catch((err) => { console.log(err.message); });
-                setStatus("Fingerprint lock enabled");
+                await AsyncStorage.setItem('@fingerprint', "true").then(()=>setStatus("Fingerprint lock enabled"))
             }
         }
     }
 
     React.useEffect(() => {
         //determine status of locks upon loading screen
-        const unsubscribe = navigation.addListener('focus', () => {
-            var RNFS = require('react-native-fs');
+        const unsubscribe = navigation.addListener('focus', async() => {
             //PIN Lock status
-            var pin_lock = RNFS.DocumentDirectoryPath + '/lock.txt'
-            RNFS.readFile(pin_lock, 'utf8')
-                .then(() => {
-                    setPIN(pin = true);
-                    setStatus("PIN Lock is currently active");
-                })
-                .catch(() => {
-                    setPIN(pin = false);
-                    setStatus("All locks are currently disabled");
-                })
+            // const temp = await AsyncStorage.getItem('@pin');
+            if (await AsyncStorage.getItem('@pin')!=null){
+                setPIN(pin = true);
+                setStatus("PIN Lock is currently active");
+                if (await AsyncStorage.getItem('@fingerprint')!=null){
+                    setState(fingerprint_status = true)
+                } else {
+                    setState(fingerprint_status = false);
+                }
+            }else{
+                setPIN(pin = false);
+                setStatus("All locks are currently disabled")
+            }
             //check fingerprint availability
             FingerprintScanner
                 .isSensorAvailable()
                 .then()
                 .catch(error => Fingerprintcheck(error.name));
-            //Fingerprint Lock status
-            var path = RNFS.DocumentDirectoryPath + '/Fingerprint.txt'
-            RNFS.readFile(path, 'utf8')
-                .then(() => {
-                    setState(fingerprint_status = true);
-                })
-                .catch(() => {
-                    setState(fingerprint_status = false);
-                })
         });
         return unsubscribe;
     });

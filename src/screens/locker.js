@@ -1,19 +1,15 @@
 import * as React from 'react';
-import { View, BackHandler, Modal, Image, Text, Dimensions, Vibration, TouchableOpacity } from 'react-native';
-import { useDarkMode, DynamicStyleSheet, useDynamicStyleSheet, DynamicValue } from 'react-native-dark-mode';
+import { View, BackHandler, Modal, Image, Text, Vibration, TouchableOpacity } from 'react-native';
+import { useDarkMode, DynamicStyleSheet, useDynamicStyleSheet } from 'react-native-dark-mode';
 import ProgressBar from 'react-native-progress/Bar';
 import { OutlinedTextField } from 'react-native-material-textfield';
 import { Button } from 'react-native-elements';
 import FingerprintScanner from 'react-native-fingerprint-scanner';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import styles from '../assets/styles';
 import Terms from '../assets/terms';
 import PrivacyPolicy from '../assets/privacypolicy';
 
-const width = Dimensions.get('window').width;
-const height = Dimensions.get('window').height;
-///Both pin & RNFS are repeatedly used in different places. Let's decalre them here itself
-var RNFS = require('react-native-fs');
-var pin = RNFS.DocumentDirectoryPath + '/lock.txt';
 function Splash({ navigation }) {
     const styles = useDynamicStyleSheet(DynamicStyles);
     var isfirsttime = false;
@@ -31,39 +27,39 @@ function Splash({ navigation }) {
     //we start immediately after screen mounts
     React.useEffect(() => {
         setStatus("Please wait..")
-        const unsubscribe = navigation.addListener('focus', () => {
-            var file = RNFS.DocumentDirectoryPath + '/FirstTime.txt'
-            RNFS.readFile(file, 'utf8')
-                .then(() => {
-                    setStatus("Starting FlashGrabs");
-                    return;
-                })
-                .catch(() => {
-                    setStatus("Welcome to FlashGrabs");
-                    isfirsttime = true;
-                    setfirsttime(true)
-                    return;
-                })
-            var path = RNFS.DocumentDirectoryPath + '/Fingerprint.txt'
-            //read the file
-            RNFS.readFile(path, 'utf8') //if it exists, it'll read and fulfill Promise
-                //if it exists authenticate using fingerprint
-                .then(() => {
-                    setStatus("Fingerprint login");
+        const unsubscribe = navigation.addListener('focus', async() => {
+            if(await AsyncStorage.getItem('@launched')!=null){
+                if (await AsyncStorage.getItem('@fingerprint')!=null){
+                    setStatus("Fingerprint Login");
                     fingerprint();
-                })
-                //if promise is rejected, pass it to PIN lock..
-                .catch(() => {
-                    RNFS.readFile(pin, 'utf8')
-                        .then(() => {
-                            setStatus("Login with PIN");
-                            setVisible(true);
-                            return;
-                        })//if PIN lock too is disabled, pass it on..
-                        .catch(() => {
-                            securepass();
-                        })
-                })
+                } else {
+                    if (await AsyncStorage.getItem('@pin')!=null){
+                        setStatus("Login with PIN");
+                        setVisible(true);
+                        return
+                    }else{
+                        securepass();
+                    }
+                }
+            } else {
+                setStatus("Welcome to FlashGrab");
+                isfirstime = true;
+                setfirsttime(true);
+                return;
+            }
+            // var file = RNFS.DocumentDirectoryPath + '/FirstTime.txt'
+            // RNFS.readFile(file, 'utf8')
+            //     .then(() => {
+            //         setStatus("Starting FlashGrab");
+            //         return;
+            //     })
+            //     .catch(() => {
+            //         setStatus("Welcome to FlashGrabs");
+            //         isfirsttime = true;
+            //         setfirsttime(true)
+            //         return;
+            //     })
+            //read the file
         });
         return unsubscribe;
     }, [navigation])
@@ -74,11 +70,10 @@ function Splash({ navigation }) {
             .authenticate({ title: 'Log into FlashGrab', description: "If fingerprint isn't working, use PIN. Don't waste time before a sale", cancelButton: "Use PIN" })
             .then(() => {
                 securepass();
-            }).catch((error) => {
+            }).catch(async(error) => {
                 //if fingerprint scanner was disabled in device settings, the app should know
                 if (error.name === "FingerprintScannerNotEnrolled") {
-                    var RNFS = require('react-native-fs');
-                    RNFS.unlink(RNFS.DocumentDirectoryPath + '/Fingerprint.txt');
+                    await AsyncStorage.removeItem('@fingerprint');
                     setStatus("Fingerprint disabled. Waiting for PIN")
                 }
                 setStatus("Waiting for PIN")
@@ -87,41 +82,33 @@ function Splash({ navigation }) {
     }
 
     //PIN lock handling function
-    const pinlock = () => {
-        //we have written pin inside lock.txt file
-        RNFS.readFile(pin, 'utf8')
-            .then((contents) => {
-                //if it matches, pass it on.
-                if (PIN === contents) {
-                    securepass();
-                } else if (!PIN) { //blank PIN
-                    Vibration.vibrate([50, 100, 50, 100]);
-                    setError("Enter PIN");
-                    return;
-                } else { //wrong PIN. Break function.
-                    Vibration.vibrate([50, 100, 50, 100, 50, 100]);
-                    setError("Wrong PIN");
-                    field.current.clear();
-                    field.current.focus();
-                    return;
-                }
-            })
+    const pinlock = async() => {
+        if(PIN === await AsyncStorage.getItem('@pin')){
+            securepass();
+        } else if (!PIN) { //blank PIN
+            Vibration.vibrate([50, 100, 50, 100]);
+            setError("Enter PIN");
+            return;
+        } else { //wrong PIN. Break function.
+            Vibration.vibrate([50, 100, 50, 100, 50, 100]);
+            setError("Wrong PIN");
+            field.current.clear();
+            field.current.focus();
+            return;
+        }
     }
 
-    const launched = () => {
+    const launched = async() => {
         setfirsttime(false);
         isfirsttime = false;
-        var file = RNFS.DocumentDirectoryPath + '/FirstTime.txt'
-        RNFS.writeFile(file, "Enabled", 'utf8')
-            .then(() => { securepass() })
-            .catch((err) => { console.log(err.message); });
+        await AsyncStorage.setItem('@launched', "true").then(()=>securepass())
     }
 
     //function to pass control to Home Screen
     const securepass = () => {
         //due to some bug in line 40, this if-else block is necessary
         if (isfirsttime === false) {
-            setStatus("Starting FlashGrabs");
+            setStatus("Starting FlashGrab");
             setVisible(false);
             //once authenticated, we remove this screen from the stack
             navigation.reset({
