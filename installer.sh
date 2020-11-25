@@ -32,7 +32,6 @@ then
     printf "\n(1/1) complete."
     printf "\nUpdating package.json"
     sed -i '25i\    "react-native-dark-mode": "^0.2.2",' package.json
-    npx react-native link react-native-vector-icons
     printf "\nDone.\n"
     printf "\nCleaning Up"
     rm -r installer
