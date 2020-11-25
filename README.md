@@ -35,7 +35,7 @@ You are free to use this code and build the FlashGrab app from source only for t
       ```
       npx react-native run-android
       ```
-  4. Initialize an empty git repository in the directory
+  4. Assuming you don't have any errors and the sample app shows up properly, we can proceed to initialize an empty git repository in the directory
   
       ```
       git init
@@ -59,14 +59,18 @@ You are free to use this code and build the FlashGrab app from source only for t
       ```
       git pull origin master
       ```
-  8. Assuming you don't have any errors and the sample app shows up properly, we can proceed to install some additional node modules. Use the installer script to install in Linux. If you're on Windows, comment line 22. Then, use the script with [WSL](https://www.microsoft.com/store/productId/9N6SVWS3RX71) in your project directory. This is not recommended however, as it's seen to break stuff rather than install it. A Windows batch file is in the works and will fix the problem soon.
+  8. Use the installer script to install in Linux. If you're on Windows, comment line 22. Then, use the script with [WSL](https://www.microsoft.com/store/productId/9N6SVWS3RX71) in your project directory. This is not recommended however, as it's seen to break stuff rather than install it. A Windows batch file is in the works and will fix the problem soon.
 
       ```
       chmod +x installer.sh
       ./installer.sh
       ```
+  9. Link all the assets to your project
+      ```
+      npx react-native link
+      ```
       
-  9. Try building the app once more to verify all installations are proper
+  10. Try building the app once more to verify all installations are proper
   
       ```
       npx react-native run-android
