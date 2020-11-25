@@ -98,6 +98,8 @@ If everything went well, you should now see the debuggable version of the exact 
       python app.py
       ```
 Now, when you start a sale in the app, it should open up Google Chrome and start the purchase by itself.
+
+## Issues
 ### Issues in building
 
 * In the event of any error(s), try cleaning gradle and resetting cache of npm 
@@ -171,6 +173,11 @@ If issues still persist after following the instructions and trying these possib
   ./manager.sh
   ```
 
+### Known bugs
+ * The node module `react-native-dark-mode` has been deprecated. That's why it's behaving like trash and conflicting with new installs. This is the purpose of `manager.sh` even existing in this repo in the first place. The developer has replaced this with `react-native-dynamic` but this is not working with `react-native@0.63.3` as stated in [this issue](https://github.com/codemotionapps/react-native-dynamic/issues/18). Although this is marked as working and closed, it still doesn't work. And, `react-native init FlashGrab --version 0.62.0` crashes due to a dependency conflict in `eslint`. If you can fix this, I can get rid of `manager.sh` and make the development process a lot easier.
+ * Although `app.py` handles Flipkart fine at the moment, their rapidly changing source code occassionally breaks it. I haven't been able to implement 100% scraping in the script to make it consistent. Any attempts to convert it to 100% scraping by using stuff like `find_element_by_xpath()` is as important as a bug fix.
+ * In `app.py`, the current implementation requires `await websocket.recv()` to run 2 times leading to `websocket.send()` statements failing after the second `recv()`. In effect, no information can be sent to the user after sending the OTP to the server during a purchase with debit cards, which is critical to the overall user experience.
+
 ## Directory Structure
   ```
   |
@@ -196,11 +203,6 @@ If issues still persist after following the instructions and trying these possib
 ## Tips
  * When building any new UI elements and coloring them, try to use the value `global.accent` for the color always to make your element match the rest of the app. This variable is defined in `src/accents.js`.
  * For changing the accent color, refer to `src/accents.js` itself
-
-## Known bugs
- * The node module `react-native-dark-mode` has been deprecated. That's why it's behaving like trash and conflicting with new installs. This is the purpose of `manager.sh` even existing in this repo in the first place. The developer has replaced this with `react-native-dynamic` but this is not working with `react-native@0.63.3` as stated in [this issue](https://github.com/codemotionapps/react-native-dynamic/issues/18). Although this is marked as working and closed, it still doesn't work. And, `react-native init FlashGrab --version 0.62.0` crashes due to a dependency conflict in `eslint`. If you can fix this, I can get rid of `manager.sh` and make the development process a lot easier.
- * Although `app.py` handles Flipkart fine at the moment, their rapidly changing source code occassionally breaks it. I haven't been able to implement 100% scraping in the script to make it consistent. Any attempts to convert it to 100% scraping by using stuff like `find_element_by_xpath()` is as important as a bug fix.
- * In `app.py`, the current implementation requires `await websocket.recv()` to run 2 times leading to `websocket.send()` statements failing after the second `recv()`. In effect, no information can be sent to the user after sending the OTP to the server during a purchase with debit cards, which is critical to the overall user experience.
 
 ## Support
 I'm a very young developer with less knowledge and experience. It would be great if you could:
