@@ -5,6 +5,7 @@ import * as React from 'react';
 import { ScrollView, Linking, Share, TouchableNativeFeedback, View, Image } from 'react-native';
 import { Text } from 'react-native-elements';
 import { createStackNavigator } from '@react-navigation/stack';
+import {Picker} from '@react-native-picker/picker';
 import { Icon } from 'react-native-elements';
 import { DynamicStyleSheet, useDynamicStyleSheet, useDarkMode } from 'react-native-dark-mode';
 import AndroidOpenSettings from 'react-native-android-open-settings';
@@ -17,6 +18,7 @@ import PrivacyPolicy from '../assets/privacypolicy';
 
 const SettingStack = createStackNavigator();
 function settingshome({ navigation }) {
+  let [color, setColor] = React.useState('Flashy Blue')
   const styles = useDynamicStyleSheet(Dynamicstyles);
   return (
     <ScrollView style={[styles.root, { flex: null }]} showsVerticalScrollIndicator={false}>
@@ -42,6 +44,26 @@ function settingshome({ navigation }) {
             </View>
           </View>
         </TouchableNativeFeedback>
+        <View style={styles.settingselement}>
+          <View style={{ flex: 1 }}>
+            <Icon style={styles.settingsicons} name='brightness-6' type='material' size={35} color={'gray'} />
+          </View>
+          <View style={{ flex: 3 }}>
+            <Text style={styles.settingstexts}>Accent Colour</Text>
+          </View>
+          <View style={{ flex: 3 }}>
+            <Picker
+              selectedValue={color}
+              mode='dropdown'
+              style={{height: 50, width: 150, marginTop: 5}}
+              onValueChange={(itemValue) =>
+                setColor(itemValue)
+              }>
+              <Picker.Item label="Flashy Blue" value="blue" />
+              <Picker.Item label="Red" value="red" />
+            </Picker>
+          </View>
+        </View>
         <TouchableNativeFeedback onPress={() => navigation.navigate('applock')} background={TouchableNativeFeedback.Ripple('gray')} r>
           <View style={styles.settingselement}>
             <View style={{ flex: 1 }}>
