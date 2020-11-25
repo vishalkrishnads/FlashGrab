@@ -24,40 +24,55 @@ You are free to use this code and build the FlashGrab app from source only for t
   6. knowledge in [React](https://reactjs.org) and [React Native](https://reactnative.dev/docs/getting-started)
   7. Google Chrome 86
 ### Steps for front-end
-   1. Clone this repo to your machine: 
-   
-      ```
-      git clone https://github.com/vishal-ds/FlashGrab.git
-      ```
-  2. Rename the cloned folder from `FlashGrab` to something else.
-  3. Create a new React Native project: 
+  1. Create a new React Native project: 
 
       ```
       npx react-native init FlashGrab
       ```
-  4. Change the working directory: `cd FlashGrab`
-  5. Try running the app to make sure that it's working
+  2. Change the working directory: `cd FlashGrab`
+  3. Try running the app to make sure that it's working
 
       ```
       npx react-native run-android
       ```
-  6. Assuming you don't have any errors and the sample app shows up properly, we can proceed to install some additional node modules. Copy `package.json` from the cloned folder to your new project directory. Use the installer script to install in Linux. If you're on Windows, comment line 22. Then, use the script with [WSL](https://www.microsoft.com/store/productId/9N6SVWS3RX71) in your project directory. This is not recommended however, as it's seen to break stuff rather than install it. A Windows batch file is in the works and will fix the problem soon.
+  4. Initialize an empty git repository in the directory
+  
+      ```
+      git init
+      ```
+  5. Add this repo as a remote origin
+  
+      ```
+      git remote add origin https://github.com/vishal-ds/FlashGrab.git
+      ```
+  6. Delete the conflicting files
+  
+      ```
+      Windows:
+      del .gitattributes .gitignore App.js index.js package.json
+      
+      Linux:
+      rm .gitattributes .gitignore App.js index.js package.json
+      ```
+  7. Pull the source code from this repo
+  
+      ```
+      git pull origin master
+      ```
+  8. Assuming you don't have any errors and the sample app shows up properly, we can proceed to install some additional node modules. Use the installer script to install in Linux. If you're on Windows, comment line 22. Then, use the script with [WSL](https://www.microsoft.com/store/productId/9N6SVWS3RX71) in your project directory. This is not recommended however, as it's seen to break stuff rather than install it. A Windows batch file is in the works and will fix the problem soon.
 
       ```
       chmod +x installer.sh
       ./installer.sh
       ```
       
-  7. Try building the app once more to verify all installations are proper
+  9. Try building the app once more to verify all installations are proper
   
       ```
       npx react-native run-android
       ```
-  8. After the app runs, go back to the folder you renamed earlier after cloning. Copy all the files and replace the files in your project directory with them.
   
-  10. Build the app again.
-  
-If everything went well, you should now see the debuggable version of the exact same app that you get from the Play Store
+If everything went well, you should now see the debuggable version of the exact same app that you get from the Play Store. Refer to troubleshooting section below to fix any problems.
 
 ### Steps for back end
 
