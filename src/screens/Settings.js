@@ -8,7 +8,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import {Picker} from '@react-native-picker/picker';
 import { Icon } from 'react-native-elements';
 import { DynamicStyleSheet, useDynamicStyleSheet, useDarkMode } from 'react-native-dark-mode';
-import AndroidOpenSettings from 'react-native-android-open-settings';
+import { NativeModules } from 'react-native';
 import Subheader from '../assets/Subheader';
 import applock from './applock';
 import instructions from './instructions';
@@ -34,7 +34,7 @@ function settingshome({ navigation }) {
             </View>
           </View>
         </TouchableNativeFeedback>
-        <TouchableNativeFeedback onPress={() => AndroidOpenSettings.displaySettings()} background={TouchableNativeFeedback.Ripple('gray')} r>
+        <TouchableNativeFeedback onPress={() => NativeModules.SystemSettings.Display()} background={TouchableNativeFeedback.Ripple('gray')} r>
           <View style={styles.settingselement}>
             <View style={{ flex: 1 }}>
               <Icon style={styles.settingsicons} name='brightness-6' type='material' size={35} color={'gray'} />
