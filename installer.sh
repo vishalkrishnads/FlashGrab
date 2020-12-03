@@ -17,7 +17,7 @@ then
     mv installer/AndroidManifest.xml android/app/src/main
     mv installer/app/build.gradle android/app/
     mv installer/build.gradle gradle.properties android/
-    mv MainActivity.java SystemSettings.java SystemSettingsPackage.java android/app/src/main/java/com/flashgrab
+    mv MainApplication.java SystemSettings.java SystemSettingsPackage.java android/app/src/main/java/com/flashgrab
     printf "\nDone.\n"
     printf "\nInstalling node modules. Please wait."
     # comment line 22 if you're using this script on Windows with WSL
