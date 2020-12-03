@@ -47,7 +47,9 @@ public class CustomClientFactory implements OkHttpClientFactory {
                         }
 
                         @Override
-                        public X509Certificate[] getAcceptedIssuers() {}
+                        public X509Certificate[] getAcceptedIssuers() {
+                            return new X509Certificate [] {};
+                        }
                     }
             };
 
