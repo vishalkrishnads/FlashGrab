@@ -25,7 +25,7 @@ You are free to use this code and build the FlashGrab app from source only for t
   4. [React Native environment](https://reactnative.dev/docs/environment-setup)
   5. a nice text editor
   6. knowledge in [React](https://reactjs.org) and [React Native](https://reactnative.dev/docs/getting-started)
-  7. Google Chrome 86
+  7. Google Chrome
 ### Steps for front-end
   1. Create a new React Native project: 
 
@@ -155,7 +155,7 @@ Now, when you start a sale in the app, it should open up Google Chrome and start
    * In the navigation bar on the left, click About Chrome
    * Your Chrome version will be displayed
    
-   Now, if your Chrome version isn't 86, update your chromedriver:
+   Now, if your Chrome version isn't 87, update your chromedriver:
    * Get the [release](http://chromedriver.chromium.org/downloads) of chromedriver corresponding to your Chrome version
    * Unzip the downloaded package
    * Replace the chromedriver in `back end/` with the new chromedriver
