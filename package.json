@@ -38,6 +38,7 @@
     "react-native-share-menu": "^5.0.2",
     "react-native-sqlite-storage": "^5.0.0",
     "react-native-swipeout": "^2.3.6",
+    "react-native-url-polyfill": "^1.2.0",
     "react-native-vector-icons": "^7.1.0"
   },
   "devDependencies": {
