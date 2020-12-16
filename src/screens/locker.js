@@ -47,19 +47,6 @@ function Splash({ navigation }) {
                 setfirsttime(true);
                 return;
             }
-            // var file = RNFS.DocumentDirectoryPath + '/FirstTime.txt'
-            // RNFS.readFile(file, 'utf8')
-            //     .then(() => {
-            //         setStatus("Starting FlashGrab");
-            //         return;
-            //     })
-            //     .catch(() => {
-            //         setStatus("Welcome to FlashGrabs");
-            //         isfirsttime = true;
-            //         setfirsttime(true)
-            //         return;
-            //     })
-            //read the file
         });
         return unsubscribe;
     }, [navigation])
