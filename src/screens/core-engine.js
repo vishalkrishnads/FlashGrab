@@ -5,7 +5,6 @@ import ProgressBar from 'react-native-progress/Bar';
 import { Button } from 'react-native-elements';
 import { TextField } from 'react-native-material-textfield';
 import KeepAwake from 'react-native-keep-awake';
-import InAppReview from "react-native-in-app-review";
 import styles from '../assets/styles';
 
 function buy({ route, navigation }) {
@@ -67,7 +66,7 @@ function buy({ route, navigation }) {
                         {
                             text: 'Okay leave',
                             style: 'destructive',
-                            onPress: () => {navigation.dispatch(e.data.action); InAppReview.RequestInAppReview();},
+                            onPress: () => {navigation.dispatch(e.data.action);},
                         },
                     ]
                 );
