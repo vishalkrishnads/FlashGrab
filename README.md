@@ -1,9 +1,6 @@
 # FlashGrab
 FlashGrab is your one-stop solution for flash sales. This is an autobuy app available for android built on the React Native platform with a python server as the back end. This is a completely open-source service which is open to everyone for [contributing](https://github.com/firstcontributions/first-contributions/blob/master/README.md) and improving. Know more about the app at our [official website](https://flashgrab.github.io)
 
-## NOTE
-This branch contains pre-release code which may be buggy. This branch may also contain broken or half-baked features. Revert to branch `master` for latest and stable release
-
 ## Screenshots
 <a><img src="https://github.com/vishal-ds/FlashGrab/blob/master/.github/Screenshots/AddSale.jpg?raw=true" height="420" width="200" ></a>
 <a><img src="https://github.com/vishal-ds/FlashGrab/blob/master/.github/Screenshots/Fingerprint.jpg?raw=true" height="420" width="200" ></a>
