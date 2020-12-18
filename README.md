@@ -180,7 +180,6 @@ If issues still persist after following the instructions and trying these possib
 ### Known bugs
  * The node module `react-native-dark-mode` has been deprecated. That's why it's behaving like trash and conflicting with new installs. This is the purpose of `manager.sh` even existing in this repo in the first place. The developer has replaced this with `react-native-dynamic` but this is not working with `react-native@0.63.3` as stated in [this issue](https://github.com/codemotionapps/react-native-dynamic/issues/18). Although this is marked as working and closed, it still doesn't work. And, `react-native init FlashGrab --version 0.62.0` crashes due to a dependency conflict in `eslint`. If you can fix this, I can get rid of `manager.sh` and make the development process a lot easier.
  * Although `app.py` handles Flipkart fine at the moment, their rapidly changing source code occassionally breaks it. I haven't been able to implement 100% scraping in the script to make it consistent. Any attempts to convert it to 100% scraping by using stuff like `find_element_by_xpath()` is as important as a bug fix.
- * In `app.py`, the current implementation requires `await websocket.recv()` to run 2 times leading to `websocket.send()` statements failing after the second `recv()`. In effect, no information can be sent to the user after sending the OTP to the server during a purchase with debit cards, which is critical to the overall user experience.
 
 ## Directory Structure
   ```
