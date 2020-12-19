@@ -16,9 +16,10 @@ class Abort(Exception):
 # function to send messages to the client
 async def status(websocket, message):
     try:
-        print("\nFlashGrab DEBUG: "+message)
+        print("\nDEBUG: "+message)
         await asyncio.wait([websocket.send(message)])
-    except:
+    except Exception:
+        print("Calling Abort")
         raise Abort()
 
 # function for submitting OTP. Common for both sellers.
@@ -150,12 +151,16 @@ class Flipkart:
                     await status(websocket, 'Sale has started')
                     nobuyoption = False
                 except:
-                    nobuyoption = True
-                    await status(websocket, 'Waiting for sale to start')
-                    driver.refresh()
-                    time.sleep(2)
-                    await Flipkart.buy(item, True)
-            buyprod.click()
+                    try:
+                        nobuyoption = True
+                        await status(websocket, 'Waiting for sale to start')
+                        driver.refresh()
+                        time.sleep(2)
+                        await Flipkart.buy(item, True)
+                    except Abort:
+                        break
+            if not nobuyoption:
+                buyprod.click()
             await status(websocket, 'Clicked BUY NOW button')
             await Flipkart.buy_recheck(True)
             return
