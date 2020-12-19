@@ -6,6 +6,7 @@ import { openDatabase } from 'react-native-sqlite-storage';
 import { DynamicStyleSheet, useDynamicStyleSheet, useDarkMode } from 'react-native-dark-mode';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import {URL} from 'react-native-url-polyfill';
 import ProgressBar from 'react-native-progress/Bar';
 import styles from '../assets/styles'
 
@@ -117,15 +118,29 @@ const Schedule_Sale = ({ route, navigation }) => {
       return;
     }
     showSaver(true);
-    //console.log(product, username, password, pin, cvv, DateTime.toISOString());
-    var url = product;
-    var urlParts = url.replace('http://', '').replace('https://', '').replace('www.', '').split(/[/?#]/);
+    const urlParts = new URL(product);
     var seller;
-    if (urlParts[0] === "flipkart.com" || urlParts[0] === "dl.flipkart.com") {
+    if (urlParts.host === "www.flipkart.com" || urlParts.host === "www.dl.flipkart.com" || urlParts.host === "flipkart.com" || urlParts.host === "dl.flipkart.com") {
       seller = "Flipkart";
-    } else if (urlParts[0] === "amazon.com" || urlParts[0] === "amazon.in") {
+    } else if (urlParts.host === "www.amazon.in" || urlParts.host === "amazon.in") {
       seller = "Amazon";
-    } else {
+    }
+    else if (urlParts.host === "www.amazon.com" || urlParts.host === "amazon.com") {
+      showSaver(false);
+      Vibration.vibrate([100, 100, 100, 100]);
+      setError1("Amazon India only")
+      Alert.alert(
+        'Sorry',
+        "FlashGrab doesn't support buying from Amazon international. This is an India only app and supports only Amazon India.",
+        [
+          {
+            text: 'Okay'
+          }
+        ],
+      );
+      return;
+    }
+    else {
       showSaver(false);
       Vibration.vibrate([100, 100, 100, 100]);
       setError1("Unsupported Seller")

@@ -2,12 +2,11 @@
 Split more screens if necessary */
 
 import * as React from 'react';
-import { ScrollView, Linking, Share, TouchableNativeFeedback, View, Image } from 'react-native';
+import { ScrollView, Linking, Share, TouchableNativeFeedback, View, Image, NativeModules } from 'react-native';
 import { Text } from 'react-native-elements';
 import { createStackNavigator } from '@react-navigation/stack';
 import { Icon } from 'react-native-elements';
 import { DynamicStyleSheet, useDynamicStyleSheet, useDarkMode } from 'react-native-dark-mode';
-import AndroidOpenSettings from 'react-native-android-open-settings';
 import Subheader from '../assets/Subheader';
 import applock from './applock';
 import instructions from './instructions';
@@ -17,6 +16,7 @@ import PrivacyPolicy from '../assets/privacypolicy';
 
 const SettingStack = createStackNavigator();
 function settingshome({ navigation }) {
+  let [color, setColor] = React.useState('Flashy Blue')
   const styles = useDynamicStyleSheet(Dynamicstyles);
   return (
     <ScrollView style={[styles.root, { flex: null }]} showsVerticalScrollIndicator={false}>
@@ -32,7 +32,7 @@ function settingshome({ navigation }) {
             </View>
           </View>
         </TouchableNativeFeedback>
-        <TouchableNativeFeedback onPress={() => AndroidOpenSettings.displaySettings()} background={TouchableNativeFeedback.Ripple('gray')} r>
+        <TouchableNativeFeedback onPress={() => NativeModules.SystemSettings.Display()} background={TouchableNativeFeedback.Ripple('gray')} r>
           <View style={styles.settingselement}>
             <View style={{ flex: 1 }}>
               <Icon style={styles.settingsicons} name='brightness-6' type='material' size={35} color={'gray'} />
