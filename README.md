@@ -1,7 +1,7 @@
 # FlashGrab
 FlashGrab is your one-stop solution for flash sales. This is an autobuy app available for android built on the React Native platform with a python server as the back end. This is a completely open-source service which is open to everyone for [contributing](https://github.com/firstcontributions/first-contributions/blob/master/README.md) and improving. Know more about the app at our [official website](https://flashgrab.github.io)
 
-<a><img src="https://github.com/vishal-ds/FlashGrab/blob/master/.github/Screenshots/playstore.png?raw=true" ></a>
+<a href="https://play.google.com/store/apps/details?id=com.flashgrab"><img src="https://github.com/vishal-ds/FlashGrab/blob/master/.github/Screenshots/playstore.png?raw=true" ></a>
 
 ## Screenshots
 <a><img src="https://github.com/vishal-ds/FlashGrab/blob/master/.github/Screenshots/AddSale.jpg?raw=true" height="420" width="200" ></a>
@@ -11,7 +11,7 @@ FlashGrab is your one-stop solution for flash sales. This is an autobuy app avai
 
 ## Credits & Mentions
 FlashGrab was not entirely developed from the ground up by me. Here are some other people who deserve a special mention and/or share the credit of this service's development
-  * [Flipkart Autobuy](https://github.com/atultherajput/flipkart-autobuy): This repo served as the base for developing the backend for FlashGrab. Hence, the contributors deserve a special mention here. Although this specific autobuy script has support only for flipkart, it does support multiple payment methods which will be coming to FlashGrab soon. This script was already pretty good that we didn't spend much time to even make it object oriented. It performs adequately well at the moment. However, more time will be spent to make the back end more optimised and fast.
+  * [Flipkart Autobuy](https://github.com/atultherajput/flipkart-autobuy): This repo served as the base for developing the backend for FlashGrab. Hence, the contributors deserve a special mention here. Although this specific autobuy script has support only for flipkart, it does support multiple payment methods which will be coming to FlashGrab soon. This script was already pretty good that we didn't spend much time to even make it object oriented. It performs adequately well at the moment. However, more time will be spent to make the back end more optimised and fast. 
   * Logo & Themes: Our designer, [Akash Shanavas](https://www.instagram.com/akash_shanavas/), also deserves a special mention here. He has worked to create the advertisement and promotion videos as well as helped design the logo for FlashGrab, both of which have helped improve the user experience.
 
 ## Build from source
