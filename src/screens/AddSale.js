@@ -84,6 +84,20 @@ const Schedule_Sale = ({ route, navigation }) => {
     });
   }
 
+  const URLError = (label, alert) => {
+    showSaver(false);
+        Vibration.vibrate([100, 100, 100, 100]);
+        setError1(label)
+        Alert.alert(
+          'Sorry', alert,
+          [
+            {
+              text: 'Okay'
+            }
+          ],
+        );
+  }
+
   //event triggered on "Schedule Sale" button press
   const save_sale = () => {
     Keyboard.dismiss();
@@ -118,41 +132,24 @@ const Schedule_Sale = ({ route, navigation }) => {
       return;
     }
     showSaver(true);
-    const urlParts = new URL(product);
-    var seller;
-    if (urlParts.host === "www.flipkart.com" || urlParts.host === "www.dl.flipkart.com" || urlParts.host === "flipkart.com" || urlParts.host === "dl.flipkart.com") {
-      seller = "Flipkart";
-    } else if (urlParts.host === "www.amazon.in" || urlParts.host === "amazon.in") {
-      seller = "Amazon";
-    }
-    else if (urlParts.host === "www.amazon.com" || urlParts.host === "amazon.com") {
-      showSaver(false);
-      Vibration.vibrate([100, 100, 100, 100]);
-      setError1("Amazon India only")
-      Alert.alert(
-        'Sorry',
-        "FlashGrab doesn't support buying from Amazon international. This is an India only app and supports only Amazon India.",
-        [
-          {
-            text: 'Okay'
-          }
-        ],
-      );
-      return;
-    }
-    else {
-      showSaver(false);
-      Vibration.vibrate([100, 100, 100, 100]);
-      setError1("Unsupported Seller")
-      Alert.alert(
-        'Sorry',
-        "FlashGrab doesn't support buying from this site at the moment. Please try with another site or please wait for FlashGrab to support it in the future.",
-        [
-          {
-            text: 'Okay'
-          }
-        ],
-      );
+    try{
+      const urlParts = new URL(product);
+      var seller;
+      if (urlParts.host === "www.flipkart.com" || urlParts.host === "www.dl.flipkart.com" || urlParts.host === "flipkart.com" || urlParts.host === "dl.flipkart.com") {
+        seller = "Flipkart";
+      } else if (urlParts.host === "www.amazon.in" || urlParts.host === "amazon.in") {
+        seller = "Amazon";
+      }
+      else if (urlParts.host === "www.amazon.com" || urlParts.host === "amazon.com") {
+        URLError("Amazon India only", "FlashGrab doesn't support buying from Amazon international. This is an India only app and supports only Amazon India.")
+        return;
+      }
+      else {
+        URLError("Unsupported seller", "FlashGrab doesn't support buying from this site at the moment. Please try with another site or please wait for FlashGrab to support it in the future.")
+        return;
+      }
+    }catch{
+      URLError("Something's fishy here", "There seems to be a problem. Maybe your URL isn't a complete or proper URL? Please recheck whether it begins with 'https://www.' to confirm.")
       return;
     }
     //fetch the item details
