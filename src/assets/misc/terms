@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { ScrollView, View, Text } from 'react-native';
 import { DynamicStyleSheet, useDynamicStyleSheet } from 'react-native-dark-mode';
-import styles from './styles';
-import Indexed from './indexed';
-import Subheader from './Subheader';
-import ContactUs from './contactstrip';
+import styles from '../styles';
+import Indexed from '../indexed';
+import Subheader from '../Subheader';
+import ContactUs from '../contactstrip';
 
 const Terms = () => {
     const style = useDynamicStyleSheet(new DynamicStyleSheet(styles));
