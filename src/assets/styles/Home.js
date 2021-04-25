@@ -24,7 +24,7 @@ export default new DynamicStyleSheet({
         marginLeft: width / 20,
         marginRight: width / 20,
         backgroundColor: new DynamicValue('#f2f2f2', '#333333'),
-        borderRadius: 50,
+        borderRadius: 25,
         justifyContent: 'center'
     },
     add_button: {

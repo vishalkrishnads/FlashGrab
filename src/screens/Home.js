@@ -4,24 +4,13 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { useDynamicStyleSheet } from 'react-native-dark-mode'
 import { openDatabase } from 'react-native-sqlite-storage';
 import Icon from 'react-native-vector-icons/MaterialIcons'
-import DATA from './test'
 import dynamicStyles from '../assets/styles/Home'
 
-var CryptoJS = require("crypto-js");
 var db = openDatabase({ name: 'FlashGrab.db' });
 const Home = ({ navigation }) => {
     const width = Dimensions.get('window').width
     const styles = useDynamicStyleSheet(dynamicStyles)
     let [listitems, set_listitems] = React.useState([])
-
-    React.useEffect(() => {
-        var ciphertext = CryptoJS.AES.encrypt('my message', `b'\xab\xdb/M\xee\xd9\xc5\x8b\xf7W\xe9\xc2\xcb\xf7\x0b\xab'`);
-        console.log("encrypted text", ciphertext.toString());
-
-        var bytes = CryptoJS.AES.decrypt(ciphertext.toString(), `b'\xab\xdb/M\xee\xd9\xc5\x8b\xf7W\xe9\xc2\xcb\xf7\x0b\xab'`);
-        var plaintext = bytes.toString(CryptoJS.enc.Utf8);
-        console.log("decrypted text", plaintext);
-    }, [])
 
     React.useEffect(() => {
         //function for first time usage (table creation)
