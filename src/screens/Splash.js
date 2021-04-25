@@ -3,6 +3,8 @@ import { View, Text, Animated, Easing, Dimensions, TouchableOpacity, TouchableNa
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useDynamicStyleSheet } from 'react-native-dark-mode'
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import EncryptedStorage from 'react-native-encrypted-storage';
+import FingerprintScanner from 'react-native-fingerprint-scanner'
 import DeleteIcon from 'react-native-vector-icons/Feather'
 import EnterIcon from 'react-native-vector-icons/Ionicons'
 import dynamicStyles from '../assets/styles/Splash'
@@ -19,12 +21,35 @@ const Splash = ({ navigation }) => {
     let [pin, change_pin] = React.useState('');
     let [isfirsttime, setfirsttime] = React.useState(false);
     let [status, set_status] = React.useState('Enter PIN')
-    // React.useEffect(() => animate(), [])
+
     React.useEffect(async () => {
         try {
-            if (await AsyncStorage.getItem('@launched') !== null) { securepass() } else { setfirsttime(true) }
+            if(await AsyncStorage.getItem('@launched') !== null){
+                await EncryptedStorage.setItem("launched", 'true')
+                AsyncStorage.removeItem('@launched')
+            }
+            if (await EncryptedStorage.getItem("launched") !== null) {
+                if (await EncryptedStorage.getItem("fingerprint") !== null) {
+                    animate()
+                    FingerprintScanner
+                        .authenticate({ title: 'Log into FlashGrab', description: "If fingerprint isn't working, use PIN. Don't waste time before a sale", cancelButton: "Use PIN" })
+                        .then(() => {
+                            securepass();
+                        }).catch(async (error) => {
+                            if (error.name === "FingerprintScannerNotEnrolled") {
+                                await EncryptedStorage.removeItem("fingerprint");
+                            }
+                            scrollUp()
+                        })
+                }
+                else if (await EncryptedStorage.getItem("pin") !== null) { animate(); scrollUp() }
+                else securepass()
+            } else { 
+                setfirsttime(true) 
+            }
         } catch (e) { }
     }, [])
+
     const animate = () => {
         Animated.timing(fadeAnim, {
             toValue: 0,
@@ -59,10 +84,16 @@ const Splash = ({ navigation }) => {
         });
         navigation.navigate("Home")
     }
+
+    const check_pin = async () => {
+        if (pin === await EncryptedStorage.getItem("pin")) securepass()
+        else { set_status('Incorrect PIN'); change_pin('') }
+    }
+
     const Button = ({ value }) => {
         return (
             <TouchableOpacity style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }} onPress={() => {
-                if (value == "OK") { console.log(`The final PIN is ${pin}`) }
+                if (value == "OK") { check_pin() }
                 else if (value == "Del") { change_pin(pin.slice(0, -1)) }
                 else if (pin.length <= 3) {
                     change_pin(prev => prev + value)
@@ -103,8 +134,9 @@ const Splash = ({ navigation }) => {
                         <View style={{ flex: 1, flexDirection: 'row' }}>
                             <View style={{ flex: 1 }}></View>
                             <TouchableOpacity style={styles.start_button} onPress={async () => {
-                                await AsyncStorage.setItem('@launched', JSON.stringify(true))
-                                securepass()
+                                await EncryptedStorage.setItem("launched", JSON.stringify(true))
+                                if (await EncryptedStorage.getItem("pin") !== null) { animate(); scrollUp() }
+                                else{securepass()}
                             }}>
                                 <Text style={styles.start_text}>START</Text>
                             </TouchableOpacity>

@@ -21,6 +21,8 @@
     "react": "^17.0.1",
     "react-native": "^0.64.0",
     "react-native-dark-mode": "^0.2.2",
+    "react-native-encrypted-storage": "^4.0.2",
+    "react-native-fingerprint-scanner": "^6.0.0",
     "react-native-gesture-handler": "^1.10.3",
     "react-native-immersive-bars": "^1.0.2",
     "react-native-modal-datetime-picker": "^9.2.1",
