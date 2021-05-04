@@ -7,6 +7,7 @@ import Splash from './src/screens/Splash'
 import Home from './src/screens/Home'
 import AddSale from './src/screens/AddSale'
 import Settings from './src/screens/Settings'
+import Details from './src/screens/Details'
 
 const Stack = createStackNavigator();
 
@@ -23,6 +24,7 @@ const App = () => {
           <Stack.Screen name="Home" component={Home} options={{ headerShown: false }} />
           <Stack.Screen name="AddSale" component={AddSale} options={{ headerShown: false }} />
           <Stack.Screen name="Settings" component={Settings} options={{ headerShown: false }} />
+          <Stack.Screen name="Details" component={Details} options={{ headerShown: false }} />
         </Stack.Navigator>
       </NavigationContainer>
     </DarkModeProvider>

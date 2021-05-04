@@ -1,16 +1,35 @@
 import React from 'react'
-import { View, Text, Image, Dimensions, FlatList, TouchableOpacity } from 'react-native'
+import { View, Text, Image, Dimensions, Alert, FlatList, TouchableOpacity, TouchableNativeFeedback, ImageBackground } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { useDynamicStyleSheet } from 'react-native-dark-mode'
+import { useDynamicStyleSheet, useDarkMode } from 'react-native-dark-mode'
 import { openDatabase } from 'react-native-sqlite-storage';
+import ShareMenu from 'react-native-share-menu';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import dynamicStyles from '../assets/styles/Home'
+import Swipeout from 'react-native-swipeout';
 
 var db = openDatabase({ name: 'FlashGrab.db' });
 const Home = ({ navigation }) => {
     const width = Dimensions.get('window').width
     const styles = useDynamicStyleSheet(dynamicStyles)
+    const isDarkMode = useDarkMode()
     let [listitems, set_listitems] = React.useState([])
+
+    const handleShare = React.useCallback((item) => {
+        if (!item) {
+            return;
+        }
+        else {
+            navigation.navigate("AddSale", { placeholder: String(item.data) })
+        };
+        []
+    });
+    React.useEffect(() => {
+        ShareMenu.getInitialShare(handleShare);
+    }, []);
+    React.useEffect(() => {
+        ShareMenu.addNewShareListener(handleShare);
+    }, []);
 
     React.useEffect(() => {
         //function for first time usage (table creation)
@@ -46,26 +65,75 @@ const Home = ({ navigation }) => {
         return unsubscribe;
     }, [navigation]);
 
+    const deleteItem = (id, name) => {
+        Alert.alert(
+            'Confirm Delete',
+            `Do you surely want to delete the sale of ${name}`,
+            [
+                { text: 'Cancel', style: 'cancel', onPress: () => { } },
+                {
+                    text: 'Delete',
+                    style: 'destructive',
+                    onPress: () => [
+                        db.transaction((tx) => {
+                            tx.executeSql(
+                                'DELETE FROM sales WHERE product_id=?',
+                                [id],
+                            );
+                        }),
+                        db.transaction((tx) => {
+                            tx.executeSql('SELECT * FROM sales', [], (tx, results) => {
+                                var temp = [];
+                                for (let i = 0; i < results.rows.length; ++i)
+                                    temp.push(results.rows.item(i));
+                                if (typeof temp !== 'undefined' && temp.length > 0) {
+                                    set_listitems(temp.reverse());
+                                }
+                            });
+                        })
+                    ],
+                },
+            ]
+        );
+    };
+
     const renderItem = ({ item }) => {
+        let swipeBtns = [{
+            text: 'Delete',
+            component: (
+                <View style={styles.delete_container}>
+                    <Icon name='delete' color='white' size={30} />
+                </View>
+            ),
+            backgroundColor: 'red',
+            underlayColor: 'rgba(0, 0, 0, 1, 0.6)',
+            onPress: () => { deleteItem(item.product_id, item.title) }
+        }];
         return (
-            <View style={styles.item_root}>
-                <View style={{ flex: 3, alignItems: 'center' }}>
-                    <Image
-                        source={{ uri: item.image }}
-                        style={styles.item_image}
-                    />
-                </View>
-                <View style={{ flex: 7 }}>
-                    <View style={{ flex: 1 }}><Text style={styles.item_title}>{item.title}</Text></View>
-                    <View style={{ flex: 1.5, flexDirection: 'row', alignItems: 'center' }}>
-                        <Image
-                            source={item.seller === "Amazon" ? require('../assets/img/amazon.webp') : require('../assets/img/flipkart.png')}
-                            style={styles.seller_icon}
-                        />
-                        <Text style={styles.item_price}>&#8377; {item.price}</Text>
+            <Swipeout right={swipeBtns}
+                autoClose={true}
+                backgroundColor='transparent'>
+                <TouchableNativeFeedback key={item.product_id} onPress={() => navigation.navigate('Details', { item: item.product_id })} background={TouchableNativeFeedback.Ripple("gray")} r>
+                    <View style={styles.item_root}>
+                        <View style={{ flex: 3, alignItems: 'center', justifyContent: 'center' }}>
+                            <Image
+                                source={{ uri: item.image }}
+                                style={styles.item_image}
+                            />
+                        </View>
+                        <View style={{ flex: 7 }}>
+                            <View style={{ flex: 1 }}><Text style={styles.item_title}>{item.title}</Text></View>
+                            <View style={{ flex: 1.5, flexDirection: 'row', alignItems: 'center' }}>
+                                <Image
+                                    source={item.seller === "Amazon" ? require('../assets/img/amazon.webp') : require('../assets/img/flipkart.png')}
+                                    style={styles.seller_icon}
+                                />
+                                <Text style={styles.item_price}>&#8377; {item.price}</Text>
+                            </View>
+                        </View>
                     </View>
-                </View>
-            </View>
+                </TouchableNativeFeedback>
+            </Swipeout>
         );
     }
     return (
@@ -73,16 +141,18 @@ const Home = ({ navigation }) => {
             <View style={{ flex: 1.5 }}>
                 <View style={{ flex: 1, flexDirection: 'row' }}>
                     <View style={{ flex: 6, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-                        <View style={{ flex: 1 }}>
+                        <View style={{flex: 1.5}}></View>
+                        <View style={{ flex: 1, alignItems: 'center' }}>
                             <Image
-                                source={require('../assets/img/foreground.png')}
+                                source={isDarkMode?require('../assets/img/foreground.png'):require('../assets/img/light_icon.png')}
                                 style={styles.logo}
                             />
                         </View>
-                        <View style={{ flex: 2, alignItems: 'flex-start', justifyContent: 'flex-start', marginLeft: width / 20 }}>
+                        <View style={{ flex: 4, marginLeft: width / 20 }}>
                             <Text style={styles.banner}>FlashGrab</Text>
                         </View>
                     </View>
+                    <View style={{ flex: 2 }}></View>
                     <View style={{ flex: 2, alignItems: 'center', justifyContent: 'center' }}>
                         <TouchableOpacity onPress={() => navigation.navigate("Settings")}><Icon name="settings" size={width / 15} color={'gray'} /></TouchableOpacity>
                     </View>
@@ -102,7 +172,7 @@ const Home = ({ navigation }) => {
             </View>
             <View style={{ flex: 1.2, flexDirection: 'row' }}>
                 <View style={{ flex: 2 }}></View>
-                <TouchableOpacity onPress={() => navigation.navigate("AddSale")} style={[styles.add_button, { backgroundColor: global.accent }]}>
+                <TouchableOpacity onPress={() => navigation.navigate("AddSale", { placeholder: '' })} style={[styles.add_button, { backgroundColor: global.accent }]}>
                     <Icon name="add" color={'white'} size={width / 10} />
                     <Text style={styles.add_button_text}>Schedule Sale</Text>
                 </TouchableOpacity>

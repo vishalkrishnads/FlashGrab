@@ -17,7 +17,7 @@ import keys from '../../keys/local'
 var CryptoJS = require("crypto-js");
 var db = openDatabase({ name: 'FlashGrab.db' });
 var moment = require('moment')
-const AddSale = ({ navigation }) => {
+const AddSale = ({ navigation, route }) => {
     const styles = useDynamicStyleSheet(dynamicStyles)
     const isDarkMode = useDarkMode()
     const fadeAnim = React.useRef(new Animated.Value(1)).current;
@@ -43,6 +43,18 @@ const AddSale = ({ navigation }) => {
         }),
         []
     );
+
+    React.useEffect(() => {
+        /*
+        This timer was also added here to fix the <WebView/> bug.
+        If we set the URL as soon as screen mounts, it renders the <WebView/> along with it causing the app to crash.
+        The obvious fix is to give some time for the rest of the components to render, and then render the <WebView/> after it.
+        */
+        setTimeout(() => {
+            const { placeholder } = route.params;
+            seturl(placeholder)
+        }, 1000)
+    }, [])
 
     const animate = () => {
         Animated.timing(fadeAnim, {
@@ -373,7 +385,7 @@ const AddSale = ({ navigation }) => {
             {url ? <View style={{ flex: 0 }}>
                 <WebView
                     style={{ height: 0 }}
-                    source={{ uri: url }}
+                    source={{ uri: !index[0] ? url : '' }}
                     injectedJavaScript={`setTimeout(function () {window.ReactNativeWebView.postMessage(document.getElementsByTagName('html')[0].innerHTML);}, 1000)`}
                     onMessage={(event) => parseHTML(event.nativeEvent.data)}
                 />
