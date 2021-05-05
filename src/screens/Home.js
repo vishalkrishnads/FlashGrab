@@ -7,6 +7,7 @@ import ShareMenu from 'react-native-share-menu';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import dynamicStyles from '../assets/styles/Home'
 import Swipeout from 'react-native-swipeout';
+var PushNotification = require("react-native-push-notification");
 
 var db = openDatabase({ name: 'FlashGrab.db' });
 const Home = ({ navigation }) => {
@@ -30,6 +31,25 @@ const Home = ({ navigation }) => {
     React.useEffect(() => {
         ShareMenu.addNewShareListener(handleShare);
     }, []);
+
+    React.useEffect(() => {
+        PushNotification.createChannel(
+            {
+                channelId: "reminders",
+                channelName: "Sale Reminders",
+                channelDescription: "Notifications to remind you of upcoming sales",
+            },
+            () => {
+                PushNotification.configure({
+                    onNotification: function (notification) {
+                        console.log("NOTIFICATION:", notification);
+                    },
+                    popInitialNotification: true,
+                    requestPermissions: true,
+                })
+            }
+        );
+    }, [])
 
     React.useEffect(() => {
         //function for first time usage (table creation)
@@ -141,10 +161,10 @@ const Home = ({ navigation }) => {
             <View style={{ flex: 1.5 }}>
                 <View style={{ flex: 1, flexDirection: 'row' }}>
                     <View style={{ flex: 6, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-                        <View style={{flex: 1.5}}></View>
+                        <View style={{ flex: 1.5 }}></View>
                         <View style={{ flex: 1, alignItems: 'center' }}>
                             <Image
-                                source={isDarkMode?require('../assets/img/foreground.png'):require('../assets/img/light_icon.png')}
+                                source={isDarkMode ? require('../assets/img/foreground.png') : require('../assets/img/light_icon.png')}
                                 style={styles.logo}
                             />
                         </View>

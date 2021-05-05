@@ -16,6 +16,7 @@ import keys from '../../keys/local'
 
 var CryptoJS = require("crypto-js");
 var db = openDatabase({ name: 'FlashGrab.db' });
+var PushNotification = require("react-native-push-notification");
 var moment = require('moment')
 const AddSale = ({ navigation, route }) => {
     const styles = useDynamicStyleSheet(dynamicStyles)
@@ -89,6 +90,20 @@ const AddSale = ({ navigation, route }) => {
         }
     }
 
+    const notify = (id) => {
+        PushNotification.localNotificationSchedule({
+            id: id,
+            channelId: "channel-id",
+            smallIcon: "ic_notification",
+            title: "Reminder",
+            subText: "Sale Reminder",
+            bigText: ("Your sale of " + name + " will begin shortly! Get back in quickly or ignore if you deleted the sale in app."),
+            message: "Your sale will begin shortly. Get back in...",
+            date: DateTime,
+            allowWhileIdle: true,
+          });
+    }
+
     const schedule = () => {
         switch_to("next")
         animate()
@@ -97,7 +112,8 @@ const AddSale = ({ navigation, route }) => {
             tx.executeSql(
                 'INSERT INTO sales (url, username, password, payment_method, payment_data, seller, date, title, price, image) VALUES (?,?,?,?,?,?,?,?,?,?)',
                 [url, CryptoJS.AES.encrypt(username.toString(), keys).toString(), CryptoJS.AES.encrypt(password.toString(), keys).toString(), payment_method, payment_method === "Card" ? CryptoJS.AES.encrypt(cvv.toString(), keys).toString() : payment_method === "UPI" ? CryptoJS.AES.encrypt(upi.toString(), keys).toString() : null, seller, DateTime.toISOString(), name, price, image],
-                (result) => {
+                (tx, result) => {
+                    notify(result.insertId)
                     seturl('')
                     navigation.navigate('Home');
                 }
