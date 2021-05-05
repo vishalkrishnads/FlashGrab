@@ -9,7 +9,7 @@ import Materialicon from 'react-native-vector-icons/MaterialCommunityIcons'
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons'
 import FlashGrabIcon from 'react-native-vector-icons/AntDesign'
 import dynamicStyles from '../assets/styles/Details'
-import keys from '../../keys/local'
+import { KEYS } from '@env'
 
 var CryptoJS = require("crypto-js");
 var db = openDatabase({ name: 'FlashGrab.db' });
@@ -39,10 +39,10 @@ const Details = ({ route, navigation }) => {
     }, [route, navigation])
 
     const decrypt = (cipher) => {
-        try{
-            var bytes = CryptoJS.AES.decrypt(cipher, keys)
+        try {
+            var bytes = CryptoJS.AES.decrypt(cipher, KEYS)
             return bytes.toString(CryptoJS.enc.Utf8)
-        }catch{
+        } catch {
             return cipher
         }
     }

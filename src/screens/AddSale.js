@@ -12,7 +12,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import dynamicStyles from '../assets/styles/AddSale'
 import Parser from '../assets/misc/parser'
 import LoadingAnimation from '../assets/misc/animation';
-import keys from '../../keys/local'
+import { KEYS } from '@env'
 
 var CryptoJS = require("crypto-js");
 var db = openDatabase({ name: 'FlashGrab.db' });
@@ -111,7 +111,7 @@ const AddSale = ({ navigation, route }) => {
         db.transaction(function (tx) {
             tx.executeSql(
                 'INSERT INTO sales (url, username, password, payment_method, payment_data, seller, date, title, price, image) VALUES (?,?,?,?,?,?,?,?,?,?)',
-                [url, CryptoJS.AES.encrypt(username.toString(), keys).toString(), CryptoJS.AES.encrypt(password.toString(), keys).toString(), payment_method, payment_method === "Card" ? CryptoJS.AES.encrypt(cvv.toString(), keys).toString() : payment_method === "UPI" ? CryptoJS.AES.encrypt(upi.toString(), keys).toString() : null, seller, DateTime.toISOString(), name, price, image],
+                [url, CryptoJS.AES.encrypt(username.toString(), KEYS).toString(), CryptoJS.AES.encrypt(password.toString(), KEYS).toString(), payment_method, payment_method === "Card" ? CryptoJS.AES.encrypt(cvv.toString(), KEYS).toString() : payment_method === "UPI" ? CryptoJS.AES.encrypt(upi.toString(), KEYS).toString() : null, seller, DateTime.toISOString(), name, price, image],
                 (tx, result) => {
                     notify(result.insertId)
                     seturl('')

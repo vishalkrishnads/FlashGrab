@@ -15,12 +15,12 @@ yarn-error.log
 .watchmanconfig
 .prettierrc.js
 app.json
-babel.config.js
 metro.config.js
 package-lock.json
 .buckconfig
 .eslintrc.js
 .flowconfig
+.env
 
 # BUCK
 buck-out/
