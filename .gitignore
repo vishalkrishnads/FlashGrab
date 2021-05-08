@@ -2,10 +2,15 @@
 #
 .DS_Store
 
-# Android/IntelliJ
-#
-android/
-ios/
+# XCode
+ios/*
+
+# Android
+android/*
+!android/app/src/main/AndroidManifest.xml
+!android/app/src/main/res/*
+!android/app/build.gradle
+!android/build.gradle
 
 # node.js
 #
@@ -48,7 +53,3 @@ buck-out/
 #Others
 /.vscode
 /__tests__
-/backups
-/back end/debug.log
-/back end/test.py
-/back end/backup.py
