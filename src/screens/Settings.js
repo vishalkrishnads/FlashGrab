@@ -9,7 +9,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import dynamicStyles from '../assets/styles/Settings'
 
-const Settings = () => {
+const Settings = ({ navigation }) => {
     const styles = useDynamicStyleSheet(dynamicStyles)
     let [fingerprint, set_fingerprint] = React.useState(false)
     let [fp_available, set_availability] = React.useState(true)
@@ -200,7 +200,7 @@ const Settings = () => {
                 <SubHeading heading={"Instructions"} />
                 <View style={{ flex: 4, flexDirection: 'row', alignItems: 'center' }}>
                     <View style={{ flex: 0.5 }}></View>
-                    <Card heading={'Guide to using this app'} active={false} issmall={false} icon={<MaterialIcons name={'book'} style={styles.card_icon} />} />
+                    <Card heading={'Guide to using this app'} onpress={() => navigation.navigate('Instructions')} active={false} issmall={false} icon={<MaterialIcons name={'book'} style={styles.card_icon} />} />
                     <View style={{ flex: 0.5 }}></View>
                 </View>
                 <SubHeading heading={"Contact Us"} />

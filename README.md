@@ -5,10 +5,10 @@ FlashGrab is your one-stop solution for flash sales. This is an autobuy app avai
 This branch holds unstable and vulnerable code which will eventually make it's way to the next release. For production code of the current release, switch to master
 
 ## Screenshots
-<a><img src="https://github.com/vishal-ds/FlashGrab/blob/master/.github/Screenshots/AddSale.jpg?raw=true" height="420" width="200" ></a>
-<a><img src="https://github.com/vishal-ds/FlashGrab/blob/master/.github/Screenshots/Fingerprint.jpg?raw=true" height="420" width="200" ></a>
-<a><img src="https://github.com/vishal-ds/FlashGrab/blob/master/.github/Screenshots/Light.jpg?raw=true" height="420" width="200" ></a>
-<a><img src="https://github.com/vishal-ds/FlashGrab/blob/master/.github/Screenshots/applock.jpg?raw=true" height="420" width="200" ></a>
+<a><img src="https://github.com/vishal-ds/FlashGrab/blob/beta/.github/Screenshots/AddSale.png?raw=true" height="420" width="200" ></a>
+<a><img src="https://github.com/vishal-ds/FlashGrab/blob/beta/.github/Screenshots/Details.png?raw=true" height="420" width="200" ></a>
+<a><img src="https://github.com/vishal-ds/FlashGrab/blob/beta/.github/Screenshots/Instruction.png?raw=true" height="420" width="200" ></a>
+<a><img src="https://github.com/vishal-ds/FlashGrab/blob/beta/.github/Screenshots/Settings.png?raw=true" height="420" width="200" ></a>
 
 ## Credits & Mentions
 FlashGrab was not entirely developed from the ground up by me. Here are some other people who deserve a special mention and/or share the credit of this service's development
