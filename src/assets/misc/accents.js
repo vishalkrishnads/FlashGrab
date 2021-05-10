@@ -1,1 +1,0 @@
-global.accent = '#036082'
