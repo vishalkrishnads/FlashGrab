@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, Text, Image, Dimensions, Alert, FlatList, TouchableOpacity, TouchableNativeFeedback, ImageBackground } from 'react-native'
+import { View, Text, Image, Dimensions, Alert, FlatList, TouchableOpacity, TouchableNativeFeedback, Share } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useDynamicStyleSheet, useDarkMode } from 'react-native-dark-mode'
 import { openDatabase } from 'react-native-sqlite-storage';
@@ -11,7 +11,6 @@ var PushNotification = require("react-native-push-notification");
 
 var db = openDatabase({ name: 'FlashGrab.db' });
 const Home = ({ navigation }) => {
-    const width = Dimensions.get('window').width
     const styles = useDynamicStyleSheet(dynamicStyles)
     const isDarkMode = useDarkMode()
     let [listitems, set_listitems] = React.useState([])
@@ -37,7 +36,7 @@ const Home = ({ navigation }) => {
         header.set('Cache-Control', 'no-cache');
         header.set('Pragma', 'no-cache');
         header.set('Expires', '0');
-        fetch('https://flashgrab.firebaseapp.com/cdn/data/notice.json', {headers: header})
+        fetch('https://flashgrab.firebaseapp.com/cdn/data/notice.json', { headers: header })
             .then((response) => response.json())
             .then((json) => {
                 json.forEach(element => {
@@ -182,13 +181,20 @@ const Home = ({ navigation }) => {
                                 style={styles.logo}
                             />
                         </View>
-                        <View style={{ flex: 4, marginLeft: width / 20 }}>
+                        <View style={{ flex: 4, marginLeft: global.width / 20 }}>
                             <Text style={styles.banner}>FlashGrab</Text>
                         </View>
                     </View>
-                    <View style={{ flex: 2 }}></View>
+                    <View style={{ flex: 1 }}></View>
+                    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                        <TouchableOpacity onPress={async() => await Share.share({
+                                    message:
+                                        `Hey there, check out FlashGrab. An amazing app for grabbing your favourite things in a flash sale.
+                                        https://flashgrab.github.io`,
+                                })}><Icon name="share" size={global.width / 15} color={'gray'} /></TouchableOpacity>
+                    </View>
                     <View style={{ flex: 2, alignItems: 'center', justifyContent: 'center' }}>
-                        <TouchableOpacity onPress={() => navigation.navigate("Settings")}><Icon name="settings" size={width / 15} color={'gray'} /></TouchableOpacity>
+                        <TouchableOpacity onPress={() => navigation.navigate("Settings")}><Icon name="settings" size={global.width / 15} color={'gray'} /></TouchableOpacity>
                     </View>
                 </View>
             </View>
@@ -207,7 +213,7 @@ const Home = ({ navigation }) => {
             <View style={{ flex: 1.2, flexDirection: 'row' }}>
                 <View style={{ flex: 2 }}></View>
                 <TouchableOpacity onPress={() => navigation.navigate("AddSale", { placeholder: '' })} style={[styles.add_button, { backgroundColor: global.accent }]}>
-                    <Icon name="add" color={'white'} size={width / 10} />
+                    <Icon name="add" color={'white'} size={global.width / 10} />
                     <Text style={styles.add_button_text}>Schedule Sale</Text>
                 </TouchableOpacity>
                 <View style={{ flex: 2 }}></View>

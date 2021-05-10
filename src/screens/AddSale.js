@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, Text, TouchableOpacity, TouchableWithoutFeedback, Animated } from 'react-native'
+import { View, Text, TouchableOpacity, TouchableWithoutFeedback, Animated, Linking } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useDynamicStyleSheet, useDarkMode } from 'react-native-dark-mode'
 import { OutlinedTextField } from 'rn-material-ui-textfield'
@@ -101,7 +101,7 @@ const AddSale = ({ navigation, route }) => {
             message: "Your sale will begin shortly. Get back in...",
             date: DateTime,
             allowWhileIdle: true,
-          });
+        });
     }
 
     const schedule = () => {
@@ -372,8 +372,15 @@ const AddSale = ({ navigation, route }) => {
 
     return (
         <SafeAreaView style={styles.root}>
-            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+            <View style={{ flex: 1, alignItems: 'center', flexDirection: 'row', justifyContent: 'center' }}>
+                <View style={{ flex: 2 }}></View>
                 <Text style={styles.heading}>Schedule A Sale</Text>
+                <View style={{ flex: 1, alignItems: 'flex-end', justifyContent: 'center' }}>
+                    <TouchableOpacity onPress={() => Linking.openURL('flashgrab.github.io')}><Icon name="web" size={global.width / 15} color={'gray'} /></TouchableOpacity>
+                </View>
+                <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                    <TouchableOpacity onPress={() => navigation.navigate("Instructions")}><Icon name="comment-question" size={global.width / 15} color={'gray'} /></TouchableOpacity>
+                </View>
             </View>
             {index[4] ? <View style={{ flex: 8, alignItems: 'center' }}>
                 <View style={{ flex: 1 }}></View>

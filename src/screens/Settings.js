@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, Text, Linking, TouchableWithoutFeedback, Modal, TouchableOpacity } from 'react-native'
+import { View, Text, Linking, TouchableWithoutFeedback, Modal, TouchableOpacity, Dimensions } from 'react-native'
 import { useDynamicStyleSheet, useDarkMode } from 'react-native-dark-mode'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { TextField } from 'rn-material-ui-textfield'
@@ -185,8 +185,15 @@ const Settings = ({ navigation }) => {
     return (
         <SafeAreaView style={styles.root}>
             <PinSelector />
-            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', flexDirection: 'row' }}>
+                <View style={{ flex: 2 }}></View>
                 <Text style={styles.heading}>Settings</Text>
+                <View style={{ flex: 1, alignItems: 'flex-end', justifyContent: 'center' }}>
+                    <TouchableOpacity onPress={() => Linking.openURL('https://github.com/vishalkrishnads/FlashGrab')}><Ionicons name="md-code-slash-outline" size={global.width / 15} color={'gray'} /></TouchableOpacity>
+                </View>
+                <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                    <TouchableOpacity onPress={() => navigation.navigate("Settings")}><MaterialIcons name="policy" size={global.width / 15} color={'gray'} /></TouchableOpacity>
+                </View>
             </View>
             <View style={{ flex: 8 }}>
                 <SubHeading heading={'App Lock'} />
