@@ -13,7 +13,8 @@ const Instructions = ({ navigation }) => {
     let [data, set_data] = React.useState([])
     let [error, set_error] = React.useState(`Loading`)
     const switch_to = (direction) => {
-        var temp = [false, false, false, false, false, false, false, false, false, false, false, false, false, false]
+        var temp = []
+        data.forEach(() => temp.push(false))
         if (direction === "next") {
             if (intro) { set_intro(false); temp[0] = true }
             else if (data.length === index.indexOf(true) + 1) { navigation.pop() }
@@ -72,10 +73,10 @@ const Instructions = ({ navigation }) => {
                 </View>
                 <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end' }}>
                     <View style={{ flex: 8 }}></View>
-                    {intro ? null : <TouchableOpacity onPress={() => switch_to("back")} style={[styles.button, { backgroundColor: global.accent }]}><Text style={styles.button_text}>Back</Text></TouchableOpacity>} 
-                    {error===`Loading`?<View style={{ flex: 4, alignItems: 'center', justifyContent: 'center' }}>
+                    {intro ? null : <TouchableOpacity onPress={() => switch_to("back")} style={[styles.button, { backgroundColor: global.accent }]}><Text style={styles.button_text}>Back</Text></TouchableOpacity>}
+                    {error === `Loading` ? <View style={{ flex: 4, alignItems: 'center', justifyContent: 'center' }}>
                         <ProgressCircleSnail color={global.accent} />
-                    </View>:<TouchableOpacity onPress={() => error ? null : switch_to("next")} style={[styles.button, { backgroundColor: error ? 'red' : global.accent }]}><Text style={styles.button_text}>{intro ? error ? error : `Let's go` : `Next`}</Text></TouchableOpacity>}
+                    </View> : <TouchableOpacity onPress={() => error ? null : switch_to("next")} style={[styles.button, { backgroundColor: error ? 'red' : global.accent }]}><Text style={styles.button_text}>{data.length === index.indexOf(true) + 1 ? `Got it` : intro ? error ? error : `Let's go` : `Next`}</Text></TouchableOpacity>}
                 </View>
                 <View style={{ flex: 0.5, alignItems: 'center' }}>
                     <Text style={styles.copyright}>&copy; 2021 FlashGrab. All rights reserved.</Text>

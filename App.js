@@ -9,6 +9,7 @@ import AddSale from './src/screens/AddSale'
 import Settings from './src/screens/Settings'
 import Details from './src/screens/Details'
 import Instructions from './src/screens/Instruction'
+import Purchase_Engine from './src/screens/Purchaser'
 
 const Stack = createStackNavigator();
 
@@ -27,6 +28,7 @@ const App = () => {
           <Stack.Screen name="Settings" component={Settings} options={{ headerShown: false }} />
           <Stack.Screen name="Details" component={Details} options={{ headerShown: false }} />
           <Stack.Screen name="Instructions" component={Instructions} options={{ headerShown: false }} />
+          <Stack.Screen name="Purchase_Engine" component={Purchase_Engine} options={{ headerShown: false }} />
         </Stack.Navigator>
       </NavigationContainer>
     </DarkModeProvider>

@@ -14,6 +14,7 @@ This branch holds unstable and vulnerable code which will eventually make it's w
 * Build a node server from scratch
 * Implement animations in Instructions and Schedule Sale pages.
 * Switch to FastLane if possible
+* Complete live updation for instructions
 
 ## Credits & Mentions
 FlashGrab was not entirely developed from the ground up by me. Here are some other people who deserve a special mention and/or share the credit of this service's development

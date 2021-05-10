@@ -33,6 +33,20 @@ const Home = ({ navigation }) => {
     }, []);
 
     React.useEffect(() => {
+        var header = new Headers()
+        header.set('Cache-Control', 'no-cache');
+        header.set('Pragma', 'no-cache');
+        header.set('Expires', '0');
+        fetch('https://flashgrab.firebaseapp.com/cdn/data/notice.json', {headers: header})
+            .then((response) => response.json())
+            .then((json) => {
+                json.forEach(element => {
+                    Alert.alert(element.heading, element.content)
+                });
+            }).catch()
+    }, [])
+
+    React.useEffect(() => {
         PushNotification.createChannel(
             {
                 channelId: "reminders",

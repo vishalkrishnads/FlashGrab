@@ -130,7 +130,7 @@ const Details = ({ route, navigation }) => {
                         <View style={{ flex: 1 }}></View>
                         <Card heading={decrypt(data.username)} icon={<Materialicon name={'account'} style={styles.card_icon} />} />
                         <View style={{ flex: 1 }}></View>
-                        <Card heading={'Buy Now'} icon={<FlashGrabIcon name={'shoppingcart'} style={[styles.card_icon, { color: 'white' }]} />} />
+                        <Card heading={'Buy Now'} onpress={() => navigation.navigate('Purchase_Engine')} icon={<FlashGrabIcon name={'shoppingcart'} style={[styles.card_icon, { color: 'white' }]} />} />
                         <View style={{ flex: 1 }}></View>
                     </View>
                 </View>
