@@ -12,11 +12,11 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import dynamicStyles from '../assets/styles/AddSale'
 import Parser from '../assets/misc/parser'
 import LoadingAnimation from '../assets/misc/animation';
+import AdView from '../assets/misc/AdView'
 import { KEYS } from '@env'
 
 var CryptoJS = require("crypto-js");
 var db = openDatabase({ name: 'FlashGrab.db' });
-var PushNotification = require("react-native-push-notification");
 var moment = require('moment')
 const AddSale = ({ navigation, route }) => {
     const styles = useDynamicStyleSheet(dynamicStyles)
@@ -90,19 +90,19 @@ const AddSale = ({ navigation, route }) => {
         }
     }
 
-    const notify = (id) => {
-        PushNotification.localNotificationSchedule({
-            id: id,
-            channelId: "channel-id",
-            smallIcon: "ic_notification",
-            title: "Reminder",
-            subText: "Sale Reminder",
-            bigText: ("Your sale of " + name + " will begin shortly! Get back in quickly or ignore if you deleted the sale in app."),
-            message: "Your sale will begin shortly. Get back in...",
-            date: DateTime,
-            allowWhileIdle: true,
-        });
-    }
+    // const notify = (id) => {
+    //     PushNotification.localNotificationSchedule({
+    //         id: id,
+    //         channelId: "channel-id",
+    //         smallIcon: "ic_notification",
+    //         title: "Reminder",
+    //         subText: "Sale Reminder",
+    //         bigText: ("Your sale of " + name + " will begin shortly! Get back in quickly or ignore if you deleted the sale in app."),
+    //         message: "Your sale will begin shortly. Get back in...",
+    //         date: DateTime,
+    //         allowWhileIdle: true,
+    //     });
+    // }
 
     const schedule = () => {
         switch_to("next")
@@ -113,7 +113,7 @@ const AddSale = ({ navigation, route }) => {
                 'INSERT INTO sales (url, username, password, payment_method, payment_data, seller, date, title, price, image) VALUES (?,?,?,?,?,?,?,?,?,?)',
                 [url, CryptoJS.AES.encrypt(username.toString(), KEYS).toString(), CryptoJS.AES.encrypt(password.toString(), KEYS).toString(), payment_method, payment_method === "Card" ? CryptoJS.AES.encrypt(cvv.toString(), KEYS).toString() : payment_method === "UPI" ? CryptoJS.AES.encrypt(upi.toString(), KEYS).toString() : null, seller, DateTime.toISOString(), name, price, image],
                 (tx, result) => {
-                    notify(result.insertId)
+                    // notify(result.insertId)
                     seturl('')
                     navigation.navigate('Home');
                 }
@@ -389,7 +389,9 @@ const AddSale = ({ navigation, route }) => {
                 </View>
             </View>
                 : <View style={{ flex: 8 }}>
-                    <View style={styles.gallery}></View>
+                    <View style={styles.gallery}>
+                        <AdView type="video" media={true}/>
+                    </View>
                     <View style={{ flex: 5 }}>
                         {index[0] ? <URLSelector /> : null}
                         {index[1] ? <Account /> : null}

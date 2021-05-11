@@ -5,6 +5,7 @@ import { useDynamicStyleSheet } from 'react-native-dark-mode'
 import NetInfo from "@react-native-community/netinfo"
 import ProgressCircleSnail from 'react-native-progress/CircleSnail'
 import dynamicStyles from '../assets/styles/Instructions'
+import AdView from '../assets/misc/AdView'
 
 const Instructions = ({ navigation }) => {
     const styles = useDynamicStyleSheet(dynamicStyles)
@@ -56,6 +57,9 @@ const Instructions = ({ navigation }) => {
             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                 <Text style={styles.heading}>Instructions</Text>
             </View>
+            {!intro ? <View style={styles.gallery}>
+                <AdView media={false}/>
+            </View> : null}
             <View style={{ flex: 8 }}>
                 <View style={{ flex: 8 }}>
                     <View style={{ flex: 8, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>

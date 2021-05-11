@@ -5,6 +5,7 @@ import { useDynamicStyleSheet } from 'react-native-dark-mode'
 import ProgressCircleSnail from 'react-native-progress/CircleSnail'
 import MarqueeText from 'react-native-marquee';
 import dynamicStyles from '../assets/styles/Purchaser'
+import AdView from '../assets/misc/AdView'
 import LoadingAnimation from '../assets/misc/animation'
 
 const Purchase_Engine = () => {
@@ -52,10 +53,8 @@ const Purchase_Engine = () => {
                 <Text style={styles.heading}>Purchase Engine</Text>
             </View>
             <View style={{ flex: 8 }}>
-                <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                    <LoadingAnimation opacity={fadeAnim} />
-                </View>
-                <View style={{ flex: 1, flexDirection: 'row' }}>
+                <View style={styles.gallery}><AdView media={true} /></View>
+                <View style={{ flex: 5, flexDirection: 'row' }}>
                     <View style={{ flex: 2 }}>
                         <View style={{ flex: 1 }}></View>
                         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>

@@ -14,7 +14,7 @@ export default new DynamicStyleSheet({
         fontSize: width/18
     },
     gallery:{
-        flex: 3,
+        flex: 4,
         backgroundColor: new DynamicValue('#f2f2f2', '#333333'),
         borderRadius: 50,
         marginLeft: 10,

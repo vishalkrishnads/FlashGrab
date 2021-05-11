@@ -13,6 +13,13 @@ export default new DynamicStyleSheet({
         fontWeight: 'bold',
         fontSize: width/18
     },
+    gallery:{
+        flex: 1.5,
+        backgroundColor: new DynamicValue('#f2f2f2', '#333333'),
+        borderRadius: 25,
+        marginLeft: 20,
+        marginRight: 20
+    },
     button:{
         flex: 4,
         height: 'auto',
