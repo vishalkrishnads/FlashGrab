@@ -26,8 +26,10 @@
     "crypto-js": "^3.3.0",
     "dotenv": "^9.0.2",
     "express": "^4.17.1",
-    "selenium-webdriver": "^4.0.0-beta.3",
     "worker-threads": "^1.0.0",
     "ws": "^7.4.5"
+  },
+  "devDependencies": {
+    "playwright": "^1.11.0"
   }
 }
