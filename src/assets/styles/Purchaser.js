@@ -22,16 +22,14 @@ export default new DynamicStyleSheet({
     },
     text_container:{
         flex: 4,
-        justifyContent: 'flex-end',
-        marginBottom: height/25,
-        marginTop: height/25,
-        marginRight: width/35,
-        alignItems: 'flex-start'
+        alignItems: 'center'
     },
     text:{
         color: new DynamicValue('black', 'white'),
-        fontSize: width/24,
-        marginBottom: height/40
+        fontSize: width/22,
+        fontFamily: 'Baloo',
+        marginBottom: height/40,
+        textAlign: 'center'
     },
     modal:{
         backgroundColor: 'rgba(0,0,0,0.5)',
@@ -47,7 +45,7 @@ export default new DynamicStyleSheet({
         justifyContent: 'center'
     },
     selector_heading:{
-        fontWeight: 'bold',
+        fontFamily: 'Baloo-Bold',
         fontSize: height/40
     },
     field_container:{
@@ -60,11 +58,12 @@ export default new DynamicStyleSheet({
     },
     button_text:{
         fontSize: width/30,
-        fontWeight: 'bold'
+        fontFamily: 'Baloo-Medium'
     },
     instruction:{
         color: new DynamicValue('#737373', '#a6a6a6' ),
         fontSize: width/30,
+        fontFamily: 'Baloo',
         marginBottom: height/40
     },
     captcha:{

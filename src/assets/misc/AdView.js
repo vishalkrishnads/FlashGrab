@@ -80,7 +80,6 @@ export default AdView = React.memo(({ index, media, type, loadOnMount = true }) 
   return (
     <NativeAdView
       ref={nativeAdRef}
-      onAdLoaded={() => console.log("Ad has been loaded")}
       onAdFailedToLoad={onAdFailedToLoad}
       onUnifiedNativeAdLoaded={onUnifiedNativeAdLoaded}
       style={{ flex: 1, alignSelf: 'center', width: '98%' }}
@@ -104,7 +103,7 @@ export default AdView = React.memo(({ index, media, type, loadOnMount = true }) 
           />
           <TaglineView
             numberOfLines={2}
-            style={styles.tagline}
+            style={{fontFamily: 'Baloo'}}
           />
           <View style={{ flexDirection: 'row' }}>
             <AdvertiserView

@@ -10,8 +10,8 @@ export default new DynamicStyleSheet({
     },
     heading:{
         color: new DynamicValue('black', 'white'),
-        fontWeight: 'bold',
-        fontSize: width/18
+        fontFamily: 'Baloo-Bold',
+        fontSize: width/17,
     },
     gallery:{
         flex: 4,
@@ -32,12 +32,13 @@ export default new DynamicStyleSheet({
     button_text:{
         color: 'white',
         margin: 5,
-        fontSize: height/40
+        fontSize: height/40,
+        fontFamily: 'Baloo-Medium'
     },
     instruction:{
         color: new DynamicValue('#737373', '#a6a6a6' ),
         fontSize: height/45,
-        marginBottom: height/40
+        fontFamily: 'Baloo',
     },
     segmented_control:{
         flex: 1,
@@ -50,7 +51,8 @@ export default new DynamicStyleSheet({
         borderWidth: 2,
     },
     segmented_control_text:{
-        fontSize: height/38, 
+        fontSize: height/38,
+        fontFamily: 'Baloo',
         margin: 10,
         fontWeight: '600'
     },
@@ -63,14 +65,17 @@ export default new DynamicStyleSheet({
     },
     icon:{
         color: new DynamicValue("black", "#f2f2f2"),
+        fontFamily: 'Baloo',
         fontSize: height/15
     },
     icon_caption:{
         color: new DynamicValue("black", "#f2f2f2"),
+        fontFamily: 'Baloo',
         fontSize: height/45
     },
     error:{
         color: 'rgb(213, 0, 0)',
+        fontFamily: 'Baloo',
         fontSize: height/55
     }
 })

@@ -10,11 +10,12 @@ export default new DynamicStyleSheet({
     },
     heading: {
         color: new DynamicValue('black', 'white'),
-        fontWeight: 'bold',
-        fontSize: width / 18
+        fontFamily: 'Baloo-Bold',
+        fontSize: width / 17
     },
     sub_heading: {
         color: new DynamicValue("black", "#f2f2f2"),
+        fontFamily: 'Baloo',
         fontSize: width / 25
     },
     card_root: {
@@ -27,10 +28,12 @@ export default new DynamicStyleSheet({
     },
     card_heading:{
         fontSize: height/50,
+        fontFamily: 'Baloo',
         color: new DynamicValue('#737373', '#a6a6a6' ), 
     },
     card_icon:{
         fontSize: height/15,
+        fontFamily: 'Baloo',
         color: new DynamicValue('#737373', '#a6a6a6' ),
     },
     modal:{
@@ -47,8 +50,8 @@ export default new DynamicStyleSheet({
         justifyContent: 'center'
     },
     selector_heading:{
-        fontWeight: 'bold',
-        fontSize: height/40
+        fontFamily: 'Baloo-Bold',
+        fontSize: height/35
     },
     field_container:{
         flex: 4,
@@ -59,7 +62,7 @@ export default new DynamicStyleSheet({
         marginRight: 10
     },
     button_text:{
-        fontSize: width/30,
-        fontWeight: 'bold'
+        fontSize: width/28,
+        fontFamily: 'Baloo-Bold'
     }
 })

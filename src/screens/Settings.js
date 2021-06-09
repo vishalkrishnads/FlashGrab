@@ -124,7 +124,8 @@ const Settings = ({ navigation }) => {
             <Modal
                 animationType='fade'
                 transparent={true}
-                visible={selector}>
+                visible={selector}
+                statusBarTranslucent={true}>
                 <View style={styles.modal}>
                     <View style={styles.selector_root}>
                         <View style={{ flex: 1.5, alignItems: 'center', justifyContent: 'center' }}>
@@ -143,6 +144,8 @@ const Settings = ({ navigation }) => {
                                 tintColor={global.accent}
                                 textColor={isDarkMode ? "white" : "black"}
                                 baseColor={isDarkMode ? "#f2f2f2" : "black"}
+                                labelTextStyle={{ fontFamily: 'Baloo' }}
+                                labelOffset={{ y0: 1 }}
                                 error={error_1}
                             />
                             <TextField
@@ -157,6 +160,8 @@ const Settings = ({ navigation }) => {
                                 tintColor={global.accent}
                                 textColor={isDarkMode ? "white" : "black"}
                                 baseColor={isDarkMode ? "#f2f2f2" : "black"}
+                                labelTextStyle={{ fontFamily: 'Baloo' }}
+                                labelOffset={{ y0: 1 }}
                                 error={error_2}
                             />
                         </View>

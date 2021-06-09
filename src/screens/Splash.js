@@ -151,7 +151,7 @@ const Splash = ({ navigation }) => {
             </Animated.View>
             <Animated.View style={{ flex: 1, transform: [{ translateY: bottom_screen }] }}>
                 <View style={{ flex: 2, alignItems: 'center', justifyContent: 'flex-end' }}>
-                    <Text style={{ color: global.accent, fontWeight: 'bold', fontSize: width / 12 }}>{status}</Text>
+                    <Text style={{ color: global.accent, fontFamily: 'Baloo-Bold', fontSize: width / 12 }}>{status}</Text>
                 </View>
                 <View style={{ flex: 3, alignItems: 'center', flexDirection: 'row', marginLeft: 10, marginRight: 10 }}>
                     <PlaceHolder place={1} />

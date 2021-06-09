@@ -17,15 +17,16 @@ export default new DynamicStyleSheet({
         backgroundColor: '#036082'
     },
     start_text: {
-        fontWeight: 'bold',
         color: 'white',
+        fontFamily: 'Baloo-Bold',
         fontSize: width / 20
     },
     captions: {
+        fontFamily: 'Baloo',
         color: new DynamicValue('black', 'white')
     },
     keypad_number: {
-        fontWeight: 'bold',
+        fontFamily: 'Baloo-Bold',
         color: new DynamicValue('black', 'white'),
         fontSize: width/10
     },
@@ -45,7 +46,7 @@ export default new DynamicStyleSheet({
     },
     status:{
         color: new DynamicValue('black', 'white'),
-        fontWeight: 'bold',
+        fontFamily: 'Baloo-Bold',
         fontSize: width/12 
     }
 })

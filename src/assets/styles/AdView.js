@@ -23,7 +23,7 @@ export default new DynamicStyleSheet({
         fontSize: height/90,
         color: 'gray',
         alignSelf: 'center',
-        fontWeight: 'bold'
+        fontFamily: 'Baloo-Bold'
     },
     header: {
         width: '100%',
@@ -38,18 +38,15 @@ export default new DynamicStyleSheet({
         borderRadius: 50
     },
     headlineview: {
-        fontWeight: 'bold',
+        fontFamily: 'Baloo-Bold',
         fontSize: width/28,
         width: '100%',
         alignSelf: 'center',
         color: new DynamicValue('black', 'white')
     },
-    taglineview:{
-        fontSize: width/40,
-        color: new DynamicValue('black', 'white')
-    },
     advertiserview: {
         fontSize: width/43,
+        fontFamily: 'Baloo',
         color: 'gray'
     },
     body:{

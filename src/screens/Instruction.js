@@ -1,7 +1,8 @@
 import React from 'react'
-import { View, Text, TouchableOpacity, Image } from 'react-native'
+import { View, Text, TouchableOpacity } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useDynamicStyleSheet } from 'react-native-dark-mode'
+import FastImage from 'react-native-fast-image'
 import NetInfo from "@react-native-community/netinfo"
 import ProgressCircleSnail from 'react-native-progress/CircleSnail'
 import dynamicStyles from '../assets/styles/Instructions'
@@ -40,13 +41,13 @@ const Instructions = ({ navigation }) => {
             <View style={{ flex: 5, flexDirection: 'row' }}>
                 <View style={{ flex: 0.2 }}></View>
                 <View style={{ flex: 2, alignItems: 'center', justifyContent: 'center' }}>
-                    <Image
+                    <FastImage
                         source={{ uri: image }}
                         style={styles.image}
+                        resizeMode={FastImage.resizeMode.contain}
                     />
                 </View>
-                <View style={{ flex: 0.5 }}></View>
-                <View style={{ flex: 2, alignItems: 'flex-end', justifyContent: 'center' }}>
+                <View style={styles.text_container}>
                     <Text style={styles.text}>{text}</Text>
                 </View>
             </View>
@@ -58,7 +59,7 @@ const Instructions = ({ navigation }) => {
                 <Text style={styles.heading}>Instructions</Text>
             </View>
             {!intro ? <View style={styles.gallery}>
-                <AdView media={false}/>
+                <AdView media={false} />
             </View> : null}
             <View style={{ flex: 8 }}>
                 <View style={{ flex: 8 }}>

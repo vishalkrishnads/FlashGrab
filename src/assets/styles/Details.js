@@ -10,8 +10,8 @@ export default new DynamicStyleSheet({
     },
     heading: {
         color: new DynamicValue('black', 'white'),
-        fontWeight: 'bold',
-        fontSize: width / 18
+        fontFamily: 'Baloo-Bold',
+        fontSize: width / 17
     },
     gallery: {
         flex: 2.5,
@@ -24,25 +24,26 @@ export default new DynamicStyleSheet({
     },
     item_image: {
         height: height/4,
-        width: height/4,
-        resizeMode: 'contain'
+        width: height/4
     },
     title:{
-        fontSize: height/45,
+        fontSize: width/23,
+        fontFamily: 'Baloo-Medium',
         color: new DynamicValue('black', 'white')
     },
     datetime:{
         color: new DynamicValue('#737373', '#a6a6a6' ),
-        fontSize: height/50
+        fontFamily: 'Baloo',
+        fontSize: width/25
     },
     price:{
         color: new DynamicValue('#737373', '#a6a6a6' ),
-        fontSize: height/40
+        fontFamily: 'Baloo',
+        fontSize: width/23
     },
     seller_icon:{
         height: height/20,
         width: height/20,
-        resizeMode: 'contain'
     },
     card_root:{
         flex: 5,
@@ -54,10 +55,12 @@ export default new DynamicStyleSheet({
     },
     card_heading:{
         color: new DynamicValue('#737373', '#a6a6a6' ),
+        fontFamily: 'Baloo',
         fontSize: width/25
     },
     card_icon:{
         fontSize: height/15,
+        fontFamily: 'Baloo',
         color: new DynamicValue('#737373', '#a6a6a6' ),
     },
 })
