@@ -1,3 +1,65 @@
+class Amazon {
+    constructor(driver, data, parent) {
+        this.driver = driver
+        this.data = data
+        this.client = new Client(parent)
+    }
+    async sequence() {
+        await this.login()
+    }
+    async login() {
+        try {
+            this.client.message(`Logging in to your account`)
+            await this.driver.click("//a[@data-nav-role='signin']")
+            await this.driver.fill("//input[@type='email']", this.data.username)
+            await this.driver.click("//input[@type='submit']")
+            if (await this.driver.waitForSelector("//h4[text()='There was a problem']", { timeout: 2000 })) {
+                this.client.message({ "message": `Username is incorrect`, "error": true })
+                throw "Abort"
+            }
+            await this.driver.fill("//input[@type='password']", this.data.password)
+            await this.driver.click("//input[@id='signInSubmit']")
+            if (await this.driver.waitForSelector("//h4[text()='There was a problem']", { timeout: 2000 }) || await this.driver.waitForSelector("//h4[text()='Important Message!']", { timeout: 2000 })) {
+                this.client.message({ "message": `Password might be incorrect`, "error": true })
+                throw "Abort"
+            }
+            this.client.message(`Logged in successfully`)
+        } catch { throw "Abort" }
+    }
+    async click_button() {
+        try {
+            await this.driver.click("//input[@id='buy-now-button']")
+        } catch {
+            this.client.message(`Couldn't find Buy Now button. Maybe sale hasn't started yet`)
+            this.client.message(`Please try again later`)
+            throw "Abort"
+        }
+    }
+    async confirm() {
+        try {
+            await this.driver.fill("//input[@type='password']", this.data.password)
+            await this.driver.click("//input[@id='signInSubmit']")
+        } catch { }
+    }
+    async continue() {
+        try {
+            // select first one from saved address
+            await this.driver.click(`:nth-match(//div[contains(@class, 'ship-to-this-address')], 1)`)
+        } catch (e) { console.log(e); throw "Abort" }
+    }
+    async cod() {
+        try {
+            await this.driver.click(`:nth-match(//span[text()='Pay on Delivery'], 2)`)
+            await this.driver.click("//input[@type='submit']")
+            await this.driver.click("//input[@value='Place your order']")
+            return false
+        } catch (e) {
+            console.log(e)
+            throw "Abort"
+        }
+    }
+}
+
 class Flipkart {
     constructor(driver, data, parent) {
         this.driver = driver
@@ -37,7 +99,6 @@ class Flipkart {
     async pin_code() {
         try {
             this.Client.message(`Checking with your PIN code`)
-            await this.driver.type("//input[@placeholder='Enter Delivery Pincode']", '')
             await this.driver.fill('#pincodeInputId', this.data.pin_code)
             try {
                 await this.driver.click("//span[text()='Change']", { timeout: 2000 })
@@ -65,30 +126,36 @@ class Flipkart {
                         }
                     } catch {
                         try {
-                            /*
-                                Why do we have to do all these "unnecessary" tasks now??
-                                Well, turns out Flipkart has some wild bugs and they need to get it through their heads :D
-                                Webdrivers (both Selenium & playwright) sometimes fail to fill out their PIN Code field properly. Dunno if they intentionally did it btw or how they're doing it
-                                Anyway, for them, that's not really a "bug" is it? It's something they prolly like since apps like FlashGrab will have a hard time functioning properly and they'll be fine.
-                                Well then dude, what's that bug? The bug is, if the customer had saved an address and even if they deleted it, Flipkart auto fills it in the PIN code field onload(), sometimes with the deleted PIN code itself LMAO
-                                It turns out if you manually Edit the address, hit the SAVE button and go back, it auto fills with that PIN code, noice.
-                                Now let's make our server do the same thing ;) if he finds that the BUY NOW button isn't clickable, before running off and telling the client "This product doesn't ship to your PIN code"
-                                You know, just to be sure LOL 
-                            */
-                            await this.Client.message(`Hmm... Sale has started but...`)
-                            await this.Client.message(`Maybe this doesn't ship to your PIN Code?`)
-                            await this.Client.message(`Re-verifying`)
-                            await this.driver.goto('https://www.flipkart.com/account/addresses')
-                            await this.driver.hover("//div[@class='dpjmKp']")
-                            await this.driver.click("//span[text()='Edit']")
-                            await this.driver.click("//button[text()='Save']")
-                            await this.driver.waitForTimeout(1000)
-                            await this.driver.goBack()
-                            await this.driver.reload()
-                        } catch { }
+                            console.log("Xpath is: //p[text()='" + this.data.pin_code + "']")
+                            await this.driver.click("//input[@placeholder='Enter Delivery Pincode']")
+                            await this.driver.click("//p[text()='" + this.data.pin_code + "']", { timeout: 2000 })
+                        } catch (e) {
+                            console.log(e)
+                            try {
+                                /*
+                                    Why do we have to do all these "unnecessary" tasks now??
+                                    Well, turns out Flipkart has some wild bugs and they need to get it through their heads :D
+                                    Webdrivers (both Selenium & playwright) sometimes fail to fill out their PIN Code field properly. Dunno if they intentionally did it btw or how they're doing it
+                                    Anyway, for them, that's not really a "bug" is it? It's something they prolly like since apps like FlashGrab will have a hard time functioning properly and they'll be fine.
+                                    Well then dude, what's that bug? The bug is, if the customer had saved an address and even if they deleted it, Flipkart auto fills it in the PIN code field onload(), sometimes with the deleted PIN code itself LMAO
+                                    It turns out if you manually Edit the address, hit the SAVE button and go back, it auto fills with that PIN code, noice.
+                                    Now let's make our server do the same thing ;) if he finds that the BUY NOW button isn't clickable, before running off and telling the client "This product doesn't ship to your PIN code"
+                                    You know, just to be sure LOL 
+                                */
+                                await this.Client.message(`Hmm... Sale has started but...`)
+                                await this.Client.message(`Maybe this doesn't ship to your PIN Code?`)
+                                await this.Client.message(`Re-verifying`)
+                                await this.driver.goto('https://www.flipkart.com/account/addresses')
+                                await this.driver.hover("//div[@class='dpjmKp']")
+                                await this.driver.click("//span[text()='Edit']")
+                                await this.driver.click("//button[text()='Save']")
+                                await this.driver.waitForTimeout(1000)
+                                await this.driver.goBack()
+                                await this.driver.reload()
+                            } catch { }
+                        }
                         try {
                             await this.driver.click("//span[@class='_3iRXzi']", { timeout: 2000 })
-                            await this.Client.message(`Oh, it does ship. Sorry, my bad XD`)
                             await this.Client.message(`Clicked BUY NOW button`)
                             break
                         } catch {
@@ -99,6 +166,10 @@ class Flipkart {
                 }
             }
         } catch { throw "Abort" }
+        try {
+            // if the user has saved multiple addresses
+            await this.driver.click("//button[text()='Deliver Here']", { timeout: 3000 })
+        } catch { }
         try {
             await this.driver.click("//button[text()='CONTINUE']")
         } catch {
@@ -168,6 +239,14 @@ class Flipkart {
             throw "Abort"
         }
     }
+    async card(sequence) {
+        if (sequence.intermediate) { }
+        else {
+            await this.driver.fill("//input[@name='cvv']", this.data.payment_data)
+            await this.driver.click("//button[text()='Continue']")
+            this.Client.message({ "intermediate": true, "image": false, "title": `Enter OTP`, "placeholder": `Enter the OTP`, "instruction": `We need the OTP you received from your bank to complete this purchase` })
+        }
+    }
 }
 
 class Client {
@@ -199,7 +278,7 @@ class Purchaser {
         this.data = data
         this.parent = parent
         this.sellers = {
-            "Amazon": '',
+            "Amazon": new Amazon(this.driver, this.data, this.parent),
             "Flipkart": new Flipkart(this.driver, this.data, this.parent)
         }
     }
@@ -223,6 +302,7 @@ class Purchaser {
                 await this.sellers[this.data.seller].cod(data)
                 break
             case "Card":
+                await this.sellers[this.data.seller].card(data)
                 break
         }
     }

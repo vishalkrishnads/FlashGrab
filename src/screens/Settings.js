@@ -2,7 +2,7 @@ import React from 'react'
 import { View, Text, Linking, TouchableWithoutFeedback, Modal, TouchableOpacity, Dimensions } from 'react-native'
 import { useDynamicStyleSheet, useDarkMode } from 'react-native-dark-mode'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { TextField } from 'rn-material-ui-textfield'
+import { TextField } from 'react-native-material-textfield'
 import EncryptedStorage from 'react-native-encrypted-storage';
 import FingerprintScanner from 'react-native-fingerprint-scanner'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'

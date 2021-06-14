@@ -10,8 +10,10 @@ export default new DynamicStyleSheet({
     },
     logo: {
         flex: 1,
-        height: new DynamicValue(height / 15, height / 10),
-        width: new DynamicValue(width / 6, width / 3),
+        height: height / 15,
+        width: width / 6,
+        // height: new DynamicValue(height / 15, height / 10),
+        // width: new DynamicValue(width / 6, width / 3),
         resizeMode: 'contain'
     },
     rough_style: {
@@ -33,14 +35,14 @@ export default new DynamicStyleSheet({
         borderBottomStartRadius: 25,
         justifyContent: 'center'
     },
-    float_button_heights:{
-        height: height/1.2
+    float_button_heights: {
+        height: height / 1.2
     },
     add_button: {
         alignSelf: 'center',
-        height: height/12,
-        width: width/2,
-        marginBottom: height/10,
+        height: height / 12,
+        width: width / 2,
+        marginBottom: height / 10,
         borderRadius: 100,
         flexDirection: 'row',
         alignItems: 'center',
@@ -61,6 +63,17 @@ export default new DynamicStyleSheet({
         height: 90,
         width: 90,
         // borderRadius: 200
+    },
+    item_image_container: {
+        flex: 3,
+        backgroundColor: new DynamicValue('#f2f2f2', 'white'),
+        borderRadius: 20,
+        marginRight: width / 20,
+        marginLeft: width / 30,
+        height: 100,
+        width: 100,
+        alignItems: 'center',
+        justifyContent: 'center'
     },
     item_title: {
         color: new DynamicValue('black', 'white'),

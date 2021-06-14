@@ -1,21 +1,16 @@
 import React from 'react'
-import { Animated, ImageBackground, Image } from 'react-native'
+import { Animated, View } from 'react-native'
+import { useDarkMode } from 'react-native-dark-mode'
 import styles from '../styles/animation'
 
 const LoadingAnimation = ({ opacity }) => {
     return (
-        <ImageBackground
-            source={require('../img/background.png')}
-            style={styles.background}
-            imageStyle={styles.background_image}
-        >
-            <Animated.View style={{ flex: 1, justifyContent: 'center', opacity: opacity }}>
-                <Image
-                    source={require('../img/foreground.png')}
-                    style={styles.foreground}
-                />
-            </Animated.View>
-        </ImageBackground>
+        <View style={{ flex: 1, justifyContent: 'center' }}>
+            <Animated.Image
+                source={useDarkMode() ? require('../img/dark.png') : require('../img/light.png')}
+                style={[styles.logo, { opacity: opacity }]}
+            />
+        </View>
     )
 }
 

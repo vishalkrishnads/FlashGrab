@@ -1,10 +1,8 @@
 import React from 'react'
-import { View, Text, Animated, Easing, Modal, TouchableWithoutFeedback, Image, Alert } from 'react-native'
+import { View, Text, Animated, Modal, TouchableWithoutFeedback, Image, Alert } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useDarkMode, useDynamicStyleSheet } from 'react-native-dark-mode'
-import { OutlinedTextField } from 'rn-material-ui-textfield'
-import ProgressCircleSnail from 'react-native-progress/CircleSnail'
-import MarqueeText from 'react-native-marquee';
+import { OutlinedTextField } from 'react-native-material-textfield'
 import dynamicStyles from '../assets/styles/Purchaser'
 import AdView from '../assets/misc/AdView'
 import { KEYS } from '@env'
@@ -15,10 +13,9 @@ const Purchase_Engine = ({ navigation, route }) => {
     const socket = new WebSocket('ws://localhost:3000');
     const isDarkMode = useDarkMode()
     const styles = useDynamicStyleSheet(dynamicStyles)
-    const fadeAnim = React.useRef(new Animated.Value(1)).current;
-    const container = React.useRef(new Animated.Value(0)).current;
+    const opacity = React.useRef(new Animated.Value(1)).current;
     let [log, update_log] = React.useState([])
-    let [display, set_display] = React.useState([])
+    let [display, set_display] = React.useState('')
     let [visibility, set_visibility] = React.useState(false)
     let [title, set_title] = React.useState('')
     let [instruction, set_instruction] = React.useState('')
@@ -26,7 +23,6 @@ const Purchase_Engine = ({ navigation, route }) => {
     let [image, set_image] = React.useState('')
     let [input, set_input] = React.useState('')
     let [error, set_error] = React.useState('')
-    const opacities = [0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 1]
     const decrypt = (cipher) => {
         try {
             var bytes = CryptoJS.AES.decrypt(cipher, KEYS)
@@ -34,17 +30,6 @@ const Purchase_Engine = ({ navigation, route }) => {
         } catch {
             return cipher
         }
-    }
-    const animate = () => {
-        Animated.timing(fadeAnim, {
-            toValue: 0,
-            duration: 1000,
-            useNativeDriver: true
-        }).start(() => Animated.timing(fadeAnim, {
-            toValue: 1,
-            duration: 1000,
-            useNativeDriver: true
-        }).start(() => animate()));
     }
 
     React.useEffect(() => {
@@ -117,19 +102,16 @@ const Purchase_Engine = ({ navigation, route }) => {
         var temp = log
         temp.push(message)
         update_log(temp)
-        Animated.timing(container, {
-            toValue: 20,
+        Animated.timing(opacity, {
+            toValue: 0,
             duration: 500,
-            useNativeDriver: true,
-            easing: Easing.bounce
+            useNativeDriver: true
         }).start(() => {
-            temp = log.slice(Math.max(log.length - 5, 1))
-            set_display(temp)
-            Animated.timing(container, {
-                toValue: -0,
+            set_display(message.message)
+            Animated.timing(opacity, {
+                toValue: 1,
                 duration: 500,
-                useNativeDriver: true,
-                easing: Easing.bounce
+                useNativeDriver: true
             }).start()
         });
     };
@@ -141,7 +123,8 @@ const Purchase_Engine = ({ navigation, route }) => {
             <Modal
                 transparent={true}
                 animationType={'fade'}
-                visible={visibility}>
+                visible={visibility}
+                statusBarTranslucent={true}>
                 <View style={styles.modal}>
                     <View style={styles.selector_root}>
                         <View style={{ flex: 1.5, alignItems: 'center', justifyContent: 'center' }}>
@@ -189,26 +172,12 @@ const Purchase_Engine = ({ navigation, route }) => {
             </Modal>
             <View style={{ flex: 8 }}>
                 <View style={styles.gallery}><AdView media={true} /></View>
-                <View style={{ flex: 5, flexDirection: 'row' }}>
-                    <View style={{ flex: 2 }}>
-                        <View style={{ flex: 1 }}></View>
-                        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                            <ProgressCircleSnail color={global.accent} />
-                        </View>
-                    </View>
+                <View style={{ flex: 5 }}>
+                    <View style={{ flex: 2 }}></View>
                     <View style={styles.text_container}>
-                        {display.map((message, index) =>
-                            <Animated.View style={{ transform: [{ translateY: container }] }}>
-                                <MarqueeText
-                                    style={[styles.text, { opacity: opacities[index] }]}
-                                    duration={3000}
-                                    marqueeOnStart
-                                    loop
-                                    marqueeDelay={1000}
-                                    marqueeResetDelay={3000}
-                                >{message.message}</MarqueeText>
-                            </Animated.View>
-                        )}
+                        <Animated.Text style={[styles.text, { opacity: opacity }]}>
+                            {display}
+                        </Animated.Text>
                     </View>
                 </View>
             </View>

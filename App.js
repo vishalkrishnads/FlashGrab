@@ -10,6 +10,7 @@ import Settings from './src/screens/Settings'
 import Details from './src/screens/Details'
 import Instructions from './src/screens/Instruction'
 import Purchase_Engine from './src/screens/Purchaser'
+import Migrator from './src/screens/Migrator'
 
 const Stack = createStackNavigator();
 
@@ -23,6 +24,7 @@ const App = () => {
       <NavigationContainer>
         <Stack.Navigator>
           <Stack.Screen name="Splash" component={Splash} options={{ headerShown: false }} />
+          <Stack.Screen name="Migrator" component={Migrator} options={{ headerShown: false }} />
           <Stack.Screen name="Home" component={Home} options={{ headerShown: false }} />
           <Stack.Screen name="AddSale" component={AddSale} options={{ headerShown: false }} />
           <Stack.Screen name="Settings" component={Settings} options={{ headerShown: false }} />

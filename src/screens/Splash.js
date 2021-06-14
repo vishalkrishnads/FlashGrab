@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Animated, Easing, Dimensions, TouchableOpacity, TouchableNativeFeedback } from 'react-native'
+import { View, Text, Animated, Easing, Dimensions, TouchableOpacity, Vibration } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useDynamicStyleSheet } from 'react-native-dark-mode'
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -24,7 +24,7 @@ const Splash = ({ navigation }) => {
 
     React.useEffect(async () => {
         try {
-            if(await AsyncStorage.getItem('@launched') !== null){
+            if (await AsyncStorage.getItem('@launched') !== null) {
                 await EncryptedStorage.setItem("launched", 'true')
                 AsyncStorage.removeItem('@launched')
             }
@@ -42,10 +42,10 @@ const Splash = ({ navigation }) => {
                             scrollUp()
                         })
                 }
-                else if (await EncryptedStorage.getItem("pin") !== null) { animate(); scrollUp() }
+                else if (await EncryptedStorage.getItem("pin") !== null) { animate(); setTimeout(() => scrollUp(), 1000) }
                 else securepass()
-            } else { 
-                setfirsttime(true) 
+            } else {
+                setfirsttime(true)
             }
         } catch (e) { }
     }, [])
@@ -53,13 +53,13 @@ const Splash = ({ navigation }) => {
     const animate = () => {
         Animated.timing(fadeAnim, {
             toValue: 0,
-            duration: 1000,
+            duration: 500,
             useNativeDriver: true
         }).start(() => Animated.timing(fadeAnim, {
             toValue: 1,
-            duration: 1000,
+            duration: 500,
             useNativeDriver: true
-        }).start(() => animate()));
+        }).start(()=>animate()));
     }
     const scrollUp = () => {
         Animated.timing(top_screen, {
@@ -75,7 +75,7 @@ const Splash = ({ navigation }) => {
                 useNativeDriver: true,
                 easing: Easing.linear
             }).start()
-        });
+        })
     };
     const securepass = () => {
         navigation.reset({
@@ -87,19 +87,20 @@ const Splash = ({ navigation }) => {
 
     const check_pin = async () => {
         if (pin === await EncryptedStorage.getItem("pin")) securepass()
-        else { set_status('Incorrect PIN'); change_pin('') }
+        else { Vibration.vibrate([50, 100, 50, 100]); set_status('Incorrect PIN'); change_pin('') }
     }
 
     const Button = ({ value }) => {
         return (
             <TouchableOpacity style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }} onPress={() => {
+                Vibration.vibrate(20)
                 if (value == "OK") { check_pin() }
                 else if (value == "Del") { change_pin(pin.slice(0, -1)) }
                 else if (pin.length <= 3) {
                     change_pin(prev => prev + value)
                 }
             }}
-                onLongPress={() => { if (value === "Del") { change_pin('') } }}
+                onLongPress={() => { if (value === "Del") { Vibration.vibrate(50); change_pin('') } }}
             >
                 {value === "OK" ? <EnterIcon name="md-enter-outline" style={[styles.keypad_number, { fontSize: width / 8, color: global.accent }]} /> : value === "Del" ? <DeleteIcon name="delete" style={styles.keypad_number} /> : <Text style={styles.keypad_number}>{value}</Text>}
             </TouchableOpacity >
@@ -136,7 +137,7 @@ const Splash = ({ navigation }) => {
                             <TouchableOpacity style={styles.start_button} onPress={async () => {
                                 await EncryptedStorage.setItem("launched", JSON.stringify(true))
                                 if (await EncryptedStorage.getItem("pin") !== null) { animate(); scrollUp() }
-                                else{securepass()}
+                                else { securepass() }
                             }}>
                                 <Text style={styles.start_text}>START</Text>
                             </TouchableOpacity>

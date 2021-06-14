@@ -26,13 +26,14 @@
     "react-native-dark-mode": "^0.2.2",
     "react-native-dotenv": "^2.5.5",
     "react-native-encrypted-storage": "^4.0.2",
+    "react-native-fast-image": "^8.3.4",
     "react-native-fingerprint-scanner": "^6.0.0",
     "react-native-gesture-handler": "^1.10.3",
     "react-native-immersive-bars": "^1.0.2",
     "react-native-marquee": "^0.3.2",
+    "react-native-material-textfield": "^0.16.1",
     "react-native-modal-datetime-picker": "^9.2.1",
     "react-native-progress": "^4.1.2",
-    "react-native-push-notification": "^7.2.3",
     "react-native-reanimated": "^2.1.0",
     "react-native-safe-area-context": "^3.2.0",
     "react-native-screens": "^3.1.1",
@@ -42,8 +43,7 @@
     "react-native-url-polyfill": "^1.3.0",
     "react-native-vector-icons": "^8.1.0",
     "react-native-video": "^5.1.0-alpha8",
-    "react-native-webview": "^11.4.2",
-    "rn-material-ui-textfield": "^1.0.4"
+    "react-native-webview": "^11.4.2"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
@@ -57,5 +57,24 @@
   },
   "jest": {
     "preset": "react-native"
-  }
+  },
+  "description": "FlashGrab is your one-stop solution for flash sales. This is an autobuy app available for android built on the React Native platform with a python server as the back end. This is a completely open-source service which is open to everyone for [contributing](https://github.com/firstcontributions/first-contributions/blob/master/README.md) and improving. Know more about the app at our [official website](https://flashgrab.github.io)",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vishalkrishnads/FlashGrab.git"
+  },
+  "keywords": [
+    "flashgrab",
+    "web",
+    "scraping",
+    "flash",
+    "sales"
+  ],
+  "author": "Vishal DS",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/vishalkrishnads/FlashGrab/issues"
+  },
+  "homepage": "https://github.com/vishalkrishnads/FlashGrab#readme"
 }
