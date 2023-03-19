@@ -1,11 +1,12 @@
 # FlashGrab
+
+> :warning: This was my first open-source project and has since been shut down.
+> :no-entry: Development was halted and repository has been archived
+
 FlashGrab is your one-stop solution for flash sales. This is an autobuy app available for android built on the React Native platform with a python server as the back end. This is a completely open-source service which is open to everyone for [contributing](https://github.com/firstcontributions/first-contributions/blob/master/README.md) and improving. Know more about the app at our [official website](https://flashgrab.github.io)
 
-## WARNING
-This branch holds unstable and vulnerable code which will eventually make it's way to the next release. For production code of the current release, switch to master
-
 ## Screenshots
-<a><img src="https://github.com/vishal-ds/FlashGrab/blob/beta/.github/Screenshots/AddSale.png?raw=true" height="420" width="200" ></a>
+<a><img src="https://github.com/vishal-ds/FlashGrab/blob/beta/.github/Screenshots/AddSale.png?raw=true" height="420" width="300" ></a>
 <a><img src="https://github.com/vishal-ds/FlashGrab/blob/beta/.github/Screenshots/Details.png?raw=true" height="420" width="200" ></a>
 <a><img src="https://github.com/vishal-ds/FlashGrab/blob/beta/.github/Screenshots/Instruction.png?raw=true" height="420" width="200" ></a>
 <a><img src="https://github.com/vishal-ds/FlashGrab/blob/beta/.github/Screenshots/Settings.png?raw=true" height="420" width="200" ></a>
@@ -50,11 +51,3 @@ However, you can still use the same methods as building any other React Native p
 ## Tips
  * When building any new UI elements and coloring them, try to use the value `global.accent` for the color always to make your element match the rest of the app. This variable is defined in `src/accents.js`.
  * For changing the accent color, refer to `src/accents.js` itself
-
-## Support
-I'm a very young developer with less knowledge and experience. It would be great if you could:
- * help me optimize the code, especially back end
- * help add new features and fix bugs that may arise
- * spread the word about the app and it's open and transparent nature
- * help reduce the natural shady doubts that people have about the app handling their sensitive data
- * [donate](https://paypal.me/vishalds) to support me
