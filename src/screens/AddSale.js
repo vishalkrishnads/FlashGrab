@@ -88,6 +88,7 @@ const AddSale = ({ navigation, route }) => {
             set_price(data[1])
             set_image(data[2])
         }
+
     }
 
     // const notify = (id) => {
