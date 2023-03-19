@@ -2,10 +2,15 @@
 #
 .DS_Store
 
-# Android/IntelliJ
-#
-android/
-ios/
+# XCode
+ios/*
+
+# Android
+android/*
+!android/app/src/main/AndroidManifest.xml
+!android/app/src/main/res/*
+!android/app/build.gradle
+!android/build.gradle
 
 # node.js
 #
@@ -15,12 +20,12 @@ yarn-error.log
 .watchmanconfig
 .prettierrc.js
 app.json
-babel.config.js
 metro.config.js
 package-lock.json
 .buckconfig
 .eslintrc.js
 .flowconfig
+.env
 
 # BUCK
 buck-out/
@@ -48,7 +53,3 @@ buck-out/
 #Others
 /.vscode
 /__tests__
-/backups
-/back end/debug.log
-/back end/test.py
-/back end/backup.py

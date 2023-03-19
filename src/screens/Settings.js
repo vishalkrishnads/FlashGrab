@@ -1,238 +1,231 @@
-/*Settings Screen for FlashGrab
-Split more screens if necessary */
+import React from 'react'
+import { View, Text, Linking, TouchableWithoutFeedback, Modal, TouchableOpacity, Dimensions } from 'react-native'
+import { useDynamicStyleSheet, useDarkMode } from 'react-native-dark-mode'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import { TextField } from 'react-native-material-textfield'
+import EncryptedStorage from 'react-native-encrypted-storage';
+import FingerprintScanner from 'react-native-fingerprint-scanner'
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
+import Ionicons from 'react-native-vector-icons/Ionicons'
+import dynamicStyles from '../assets/styles/Settings'
 
-import * as React from 'react';
-import { ScrollView, Linking, Share, TouchableNativeFeedback, View, Image, NativeModules } from 'react-native';
-import { Text } from 'react-native-elements';
-import { createStackNavigator } from '@react-navigation/stack';
-import { Icon } from 'react-native-elements';
-import { DynamicStyleSheet, useDynamicStyleSheet, useDarkMode } from 'react-native-dark-mode';
-import Subheader from '../assets/Subheader';
-import applock from './applock';
-import instructions from './instructions';
-import styles from '../assets/styles'
-import Terms from '../assets/terms';
-import PrivacyPolicy from '../assets/privacypolicy';
+const Settings = ({ navigation }) => {
+    const styles = useDynamicStyleSheet(dynamicStyles)
+    let [fingerprint, set_fingerprint] = React.useState(false)
+    let [fp_available, set_availability] = React.useState(true)
+    let [selector, toggle_selector] = React.useState(false)
+    let [pin, set_pin] = React.useState('')
+    let [error, set_error] = React.useState('')
+    const isDarkMode = useDarkMode()
 
-const SettingStack = createStackNavigator();
-function settingshome({ navigation }) {
-  let [color, setColor] = React.useState('Flashy Blue')
-  const styles = useDynamicStyleSheet(Dynamicstyles);
-  return (
-    <ScrollView style={[styles.root, { flex: null }]} showsVerticalScrollIndicator={false}>
-      <Subheader text={'App Settings'} />
-      <View style={{ flex: 3, justifyContent: 'flex-start' }}>
-        <TouchableNativeFeedback onPress={() => navigation.navigate('Instructions')} background={TouchableNativeFeedback.Ripple('gray')} r>
-          <View style={styles.settingselement}>
-            <View style={{ flex: 1 }}>
-              <Icon style={styles.settingsicons} name='book' type='material' size={35} color={'gray'} />
+    React.useEffect(async () => {
+        try {
+            const PIN = await EncryptedStorage.getItem("pin");
+            if (PIN !== null) {
+                set_pin(PIN)
+            }
+        } catch (error) { }
+        try {
+            const FP = await EncryptedStorage.getItem("fingerprint");
+            if (FP !== null) {
+                set_fingerprint(true)
+            }
+        } catch (error) { }
+        FingerprintScanner
+            .isSensorAvailable()
+            .then(set_error(''))
+            .catch(error => {
+                if (!error.name === "FingerprintScannerNotEnrolled") { set_availability(false) }
+            });
+    }, [])
+
+    const toggle_pin = async () => {
+        if (!pin) { toggle_selector(true) }
+        else {
+            await EncryptedStorage.removeItem("pin");
+            set_pin('');
+            await EncryptedStorage.removeItem("fingerprint");
+            set_fingerprint(false)
+        }
+    }
+
+    const toggle_fp = async () => {
+        if (!pin) { set_error('Set a PIN first') }
+        else {
+            if (!fingerprint) {
+                FingerprintScanner
+                    .authenticate({ title: 'Verify fingerprint', description: "Verify to use your fingerprints for unlocking FlashGrab", cancelButton: "Cancel" })
+                    .then(async () => { set_error(''); await EncryptedStorage.setItem("fingerprint", 'true'); set_fingerprint(true) })
+                    .catch((error) => {
+                        if (error.name === "FingerprintScannerNotEnrolled") set_error('Register in settings first')
+                    })
+            }
+            else { await EncryptedStorage.removeItem("fingerprint"); set_fingerprint(false) }
+        }
+    }
+
+    const SubHeading = ({ heading }) => {
+        return (
+            <View style={{ flex: 1, flexDirection: 'row' }}>
+                <View style={{ flex: 1 }}></View>
+                <View style={{ flex: 10, justifyContent: 'center' }}>
+                    <Text style={styles.sub_heading}>{heading}</Text>
+                </View>
+                <View style={{ flex: 1 }}></View>
             </View>
-            <View style={{ flex: 6 }}>
-              <Text style={styles.settingstexts}>Instructions</Text>
+        );
+    }
+
+    const Card = ({ heading, issmall, icon, onpress, active, err }) => {
+        return (
+            <TouchableOpacity onPress={onpress} style={[styles.card_root, { backgroundColor: active ? global.accent : err ? 'rgb(213, 0, 0)' : styles.card_root.backgroundColor }]}>
+                <View style={{ flex: 1 }}></View>
+                <View style={{ flex: 4, flexDirection: 'row' }}>
+                    <View style={{ flex: 4, alignItems: 'center', justifyContent: 'center' }}>
+                        {icon}
+                    </View>
+                    <View style={{ flex: issmall ? 2 : 8 }}></View>
+                </View>
+                <View style={{ flex: 2, flexDirection: 'row' }}>
+                    <View style={{ flex: issmall ? 1 : 0.5 }}></View>
+                    <View style={{ flex: 4 }}>
+                        <Text style={[styles.card_heading, { color: active || err ? 'white' : styles.card_heading.color }]}>{heading}</Text>
+                    </View>
+                    <View style={{ flex: 1 }}></View>
+                </View>
+                <View style={{ flex: 1 }}></View>
+            </TouchableOpacity>
+        );
+    }
+
+    const PinSelector = () => {
+        let [input_1, setinput_1] = React.useState('')
+        let [input_2, setinput_2] = React.useState('')
+        let [error_1, seterror_1] = React.useState('')
+        let [error_2, seterror_2] = React.useState('')
+        const field = React.useRef(null)
+        const setpin = async () => {
+            if (!input_1 || !input_2) {
+                if (!input_1) { seterror_1('Please enter a PIN') }
+                if (!input_2) { seterror_2('Please confirm your PIN') }
+            } else {
+                if (input_1 === input_2) {
+                    await EncryptedStorage.setItem("pin", input_1);
+                    set_pin(input_1)
+                    set_error('')
+                    toggle_selector(false)
+                } else {
+                    seterror_1(`These PIN's don't match`)
+                    seterror_2(`These PIN's don't match`)
+                }
+            }
+        }
+        return (
+            <Modal
+                animationType='fade'
+                transparent={true}
+                visible={selector}
+                statusBarTranslucent={true}>
+                <View style={styles.modal}>
+                    <View style={styles.selector_root}>
+                        <View style={{ flex: 1.5, alignItems: 'center', justifyContent: 'center' }}>
+                            <Text style={[styles.selector_heading, { color: global.accent }]}>Set a PIN Lock</Text>
+                        </View>
+                        <View style={styles.field_container}>
+                            <TextField
+                                label='Set a 4-digit PIN'
+                                onChangeText={input_1 => setinput_1(input_1)}
+                                onSubmitEditing={() => { field.current.focus() }}
+                                textContentType='password'
+                                returnKeyType="next"
+                                secureTextEntry={true}
+                                maxLength={4}
+                                secureTextEntry keyboardType='number-pad'
+                                tintColor={global.accent}
+                                textColor={isDarkMode ? "white" : "black"}
+                                baseColor={isDarkMode ? "#f2f2f2" : "black"}
+                                labelTextStyle={{ fontFamily: 'Baloo' }}
+                                labelOffset={{ y0: 1 }}
+                                error={error_1}
+                            />
+                            <TextField
+                                ref={field}
+                                label='Confirm PIN'
+                                onChangeText={input_2 => setinput_2(input_2)}
+                                onSubmitEditing={setpin}
+                                textContentType='password'
+                                secureTextEntry={true}
+                                maxLength={4}
+                                secureTextEntry keyboardType='number-pad'
+                                tintColor={global.accent}
+                                textColor={isDarkMode ? "white" : "black"}
+                                baseColor={isDarkMode ? "#f2f2f2" : "black"}
+                                labelTextStyle={{ fontFamily: 'Baloo' }}
+                                labelOffset={{ y0: 1 }}
+                                error={error_2}
+                            />
+                        </View>
+                        <View style={{ flex: 1, justifyContent: 'flex-end', flexDirection: 'row' }}>
+                            <View style={{ flex: 5 }}></View>
+                            <View style={{ flex: 2, flexDirection: 'row' }}>
+                                <TouchableWithoutFeedback onPress={() => toggle_selector(false)}>
+                                    <View style={styles.button}>
+                                        <Text style={[styles.button_text, { color: global.accent }]}>CANCEL</Text>
+                                    </View>
+                                </TouchableWithoutFeedback>
+                                <TouchableWithoutFeedback onPress={() => setpin()}>
+                                    <View style={styles.button}>
+                                        <Text style={[styles.button_text, { color: global.accent }]}>OK</Text>
+                                    </View>
+                                </TouchableWithoutFeedback>
+                            </View>
+                            <View style={{ flex: 1 }}></View>
+                        </View>
+                    </View>
+                </View>
+            </Modal>
+        )
+    }
+
+    return (
+        <SafeAreaView style={styles.root}>
+            <PinSelector />
+            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', flexDirection: 'row' }}>
+                <View style={{ flex: 2 }}></View>
+                <Text style={styles.heading}>Settings</Text>
+                <View style={{ flex: 1, alignItems: 'flex-end', justifyContent: 'center' }}>
+                    <TouchableOpacity onPress={() => Linking.openURL('https://github.com/vishalkrishnads/FlashGrab')}><Ionicons name="md-code-slash-outline" size={global.width / 15} color={'gray'} /></TouchableOpacity>
+                </View>
+                <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                    <TouchableOpacity onPress={() => navigation.navigate("Settings")}><MaterialIcons name="policy" size={global.width / 15} color={'gray'} /></TouchableOpacity>
+                </View>
             </View>
-          </View>
-        </TouchableNativeFeedback>
-        <TouchableNativeFeedback onPress={() => NativeModules.SystemSettings.Display()} background={TouchableNativeFeedback.Ripple('gray')} r>
-          <View style={styles.settingselement}>
-            <View style={{ flex: 1 }}>
-              <Icon style={styles.settingsicons} name='brightness-6' type='material' size={35} color={'gray'} />
+            <View style={{ flex: 8 }}>
+                <SubHeading heading={'App Lock'} />
+                <View style={{ flex: 4, alignItems: 'center', justifyContent: 'center', flexDirection: 'row' }}>
+                    <View style={{ flex: fp_available ? 1 : 0.5 }}></View>
+                    {fp_available ? <Card heading={error ? error : 'Fingerprint'} onpress={toggle_fp} active={fingerprint} err={error} issmall={true} icon={<MaterialIcons name={'fingerprint'} style={[styles.card_icon, { color: fingerprint || error ? 'white' : styles.card_icon.color }]} />} /> : null}
+                    {fp_available ? <View style={{ flex: 1 }}></View> : null}
+                    <Card heading={'PIN Lock'} issmall={fp_available} onpress={toggle_pin} active={pin} icon={<Ionicons name={'keypad'} style={[styles.card_icon, { color: pin ? 'white' : styles.card_icon.color }]} />} />
+                    <View style={{ flex: fp_available ? 1 : 0.5 }}></View>
+                </View>
+                <SubHeading heading={"Instructions"} />
+                <View style={{ flex: 4, flexDirection: 'row', alignItems: 'center' }}>
+                    <View style={{ flex: 0.5 }}></View>
+                    <Card heading={'Guide to using this app'} onpress={() => navigation.navigate('Instructions')} active={false} issmall={false} icon={<MaterialIcons name={'book'} style={styles.card_icon} />} />
+                    <View style={{ flex: 0.5 }}></View>
+                </View>
+                <SubHeading heading={"Contact Us"} />
+                <View style={{ flex: 4, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+                    <View style={{ flex: 1 }}></View>
+                    <Card heading={'WhatsApp'} active={false} onpress={() => Linking.openURL('https://api.whatsapp.com/send?phone=919074775013&text=Hi%20FlashGrab%20support.%20I%20have%20some%20queries%20regarding%20the%20app%20and%20am%20contacting%20you%20for%20the%20the%20same.')} issmall={true} icon={<Ionicons name={'logo-whatsapp'} style={styles.card_icon} />} />
+                    <View style={{ flex: 1 }}></View>
+                    <Card heading={'Instagram'} active={false} onpress={() => Linking.openURL('https://instagram.com/flashgrab')} issmall={true} icon={<Ionicons name={'logo-instagram'} style={styles.card_icon} />} />
+                    <View style={{ flex: 1 }}></View>
+                </View>
             </View>
-            <View style={{ flex: 6 }}>
-              <Text style={styles.settingstexts}>Theme</Text>
-            </View>
-          </View>
-        </TouchableNativeFeedback>
-        <TouchableNativeFeedback onPress={() => navigation.navigate('applock')} background={TouchableNativeFeedback.Ripple('gray')} r>
-          <View style={styles.settingselement}>
-            <View style={{ flex: 1 }}>
-              <Icon style={styles.settingsicons} name='lock' type='material' size={35} color={'gray'} />
-            </View>
-            <View style={{ flex: 6 }}>
-              <Text style={styles.settingstexts}>App Lock</Text>
-            </View>
-          </View>
-        </TouchableNativeFeedback>
-      </View>
-      <View style={{flex: 1, justifyContent: 'flex-start'}}>
-        <Subheader text="Contact Us"/>
-        <TouchableNativeFeedback onPress={() => Linking.openURL('https://api.whatsapp.com/send?phone=919074775013&text=Hi%20FlashGrab%20support.%20I%20have%20some%20queries%20regarding%20the%20app%20and%20am%20contacting%20you%20for%20the%20the%20same.')} background={TouchableNativeFeedback.Ripple('gray')} r>
-          <View style={styles.settingselement}>
-            <View style={{ flex: 1 }}>
-              <Icon style={styles.settingsicons} name='chat-bubble' type='material' size={35} color={'gray'} />
-            </View>
-            <View style={{ flex: 6 }}>
-              <Text style={styles.settingstexts}>Chat with support</Text>
-            </View>
-          </View>
-        </TouchableNativeFeedback>
-        <TouchableNativeFeedback onPress={() => Linking.openURL('https://instagram.com/flashgrab')} background={TouchableNativeFeedback.Ripple('gray')} r>
-          <View style={styles.settingselement}>
-            <View style={{ flex: 1 }}>
-                <Image
-                  style={{width: 30, height: 30, marginTop: 15, marginLeft: 20}}
-                  source={require('../assets/img/Instagram.png')}
-                />
-            </View>
-            <View style={{ flex: 6 }}>
-              <Text style={styles.settingstexts}>Follow us on Instagram</Text>
-            </View>
-          </View>
-        </TouchableNativeFeedback>
-        <TouchableNativeFeedback background={TouchableNativeFeedback.Ripple('gray')} onPress={() => Linking.openURL("https://flashgrab.github.io")}>
-          <View style={styles.settingselement}>
-            <View style={{ flex: 1 }}>
-              <Icon style={styles.settingsicons} name='public' type='material' color={'gray'} size={35} />
-            </View>
-            <View style={{ flex: 6 }}>
-              <Text style={styles.settingstexts}>Visit website</Text>
-            </View>
-          </View>
-        </TouchableNativeFeedback>
-        <TouchableNativeFeedback background={TouchableNativeFeedback.Ripple('gray')} onPress={() => Linking.openURL("mailto:321vishalds@gmail.com")}>
-          <View style={styles.settingselement}>
-            <View style={{ flex: 1 }}>
-              <Icon style={styles.settingsicons} name='contact-mail' type='material' color={'gray'} size={30} />
-            </View>
-            <View style={{ flex: 6 }}>
-              <Text style={styles.settingstexts}>Developer Contact</Text>
-            </View>
-          </View>
-        </TouchableNativeFeedback>
-      </View>
-      <View style={{ flex: 1, justifyContent: 'flex-start' }}>
-        <Subheader text="About" />
-        <TouchableNativeFeedback onPress={async()=>{await Share.share({ title: "Share FlashGrab", message: "Hey there, have you been frustrated by flash sales? I'm now loving flash sales because of this. Try it: https://flashgrab.github.io/" })}} background={TouchableNativeFeedback.Ripple('gray')} r>
-          <View style={styles.settingselement}>
-            <View style={{ flex: 1 }}>
-              <Icon style={styles.settingsicons} name='share' type='material' size={35} color={'gray'} />
-            </View>
-            <View style={{ flex: 6 }}>
-              <Text style={styles.settingstexts}>Share FlashGrab</Text>
-            </View>
-          </View>
-        </TouchableNativeFeedback>
-        <TouchableNativeFeedback onPress={() => Linking.openSettings()} background={TouchableNativeFeedback.Ripple('gray')} r>
-          <View style={styles.settingselement}>
-            <View style={{ flex: 1 }}>
-              <Icon style={styles.settingsicons} name='android' type='material' size={35} color={'gray'} />
-            </View>
-            <View style={{ flex: 5.5 }}>
-              <Text style={styles.settingstexts}>App Info</Text>
-            </View>
-          </View>
-        </TouchableNativeFeedback>
-        <TouchableNativeFeedback onPress={() => navigation.navigate('Terms')} background={TouchableNativeFeedback.Ripple('gray')} r>
-          <View style={styles.settingselement}>
-            <View style={{ flex: 1 }}>
-              <Icon style={styles.settingsicons} name='help-outline' type='material' size={35} color={'gray'} />
-            </View>
-            <View style={{ flex: 6 }}>
-              <Text style={styles.settingstexts}>Terms Of Service</Text>
-            </View>
-          </View>
-        </TouchableNativeFeedback>
-        <TouchableNativeFeedback onPress={() => navigation.navigate('Privacy')} background={TouchableNativeFeedback.Ripple('gray')} r>
-          <View style={styles.settingselement}>
-            <View style={{ flex: 1 }}>
-              <Icon style={styles.settingsicons} name='security' type='material' size={35} color={'gray'} />
-            </View>
-            <View style={{ flex: 6 }}>
-              <Text style={styles.settingstexts}>Privacy Policy</Text>
-            </View>
-          </View>
-        </TouchableNativeFeedback>
-        <TouchableNativeFeedback onPress={() => Linking.openURL("https://github.com/vishal-ds/FlashGrab")} background={TouchableNativeFeedback.Ripple('gray')} r>
-          <View style={styles.settingselement}>
-            <View style={{ flex: 1 }}>
-              <Icon style={styles.settingsicons} name='developer-mode' type='material' size={35} color={'gray'} />
-            </View>
-            <View style={{ flex: 6 }}>
-              <Text style={styles.settingstexts}>Source Code</Text>
-            </View>
-          </View>
-        </TouchableNativeFeedback>
-      </View>
-    </ScrollView>
-  );
+        </SafeAreaView>
+    );
 }
 
-const termsofuse = () => {
-  return (
-    <Terms />
-  );
-}
-
-const privacypolicy = () => {
-  return (
-    <PrivacyPolicy />
-  );
-}
-
-function Settings() {
-  const isDarkMode = useDarkMode();
-  return (
-    <SettingStack.Navigator>
-      <SettingStack.Screen
-        name="Settings"
-        component={settingshome}
-        options={{
-          headerStyle: {
-            backgroundColor: isDarkMode ? 'black' : 'white',
-          },
-          animationEnabled: false,
-          headerTintColor: isDarkMode ? 'white' : 'black',
-        }}
-      />
-      <SettingStack.Screen
-        name="applock"
-        component={applock}
-        options={{
-          headerStyle: {
-            backgroundColor: isDarkMode ? 'black' : 'white',
-          },
-          animationEnabled: false,
-          headerTintColor: isDarkMode ? 'white' : 'black',
-          title: "App Lock"
-        }}
-      />
-      <SettingStack.Screen
-        name="Instructions"
-        component={instructions}
-        options={{
-          headerStyle: {
-            backgroundColor: isDarkMode ? 'black' : 'white',
-          },
-          animationEnabled: false,
-          headerTintColor: isDarkMode ? 'white' : 'black',
-        }} />
-      <SettingStack.Screen
-        name="Terms"
-        component={termsofuse}
-        options={{
-          headerStyle: {
-            backgroundColor: isDarkMode ? 'black' : 'white',
-          },
-          animationEnabled: false,
-          headerTintColor: isDarkMode ? 'white' : 'black',
-          title: "Terms Of Use"
-        }}
-      />
-      <SettingStack.Screen
-        name="Privacy"
-        component={privacypolicy}
-        options={{
-          headerStyle: {
-            backgroundColor: isDarkMode ? 'black' : 'white',
-          },
-          animationEnabled: false,
-          headerTintColor: isDarkMode ? 'white' : 'black',
-          title: "Privacy Policy"
-        }}
-      />
-    </SettingStack.Navigator>
-  );
-}
-
-const Dynamicstyles = new DynamicStyleSheet(styles);
-
-export default Settings;
+export default Settings

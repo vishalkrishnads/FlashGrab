@@ -1,13 +1,24 @@
 # FlashGrab
+
+> :warning: This was my first open-source project and has since been shut down.
+> 
+> :no_entry: Development was halted and repository has been archived
+
 FlashGrab is your one-stop solution for flash sales. This is an autobuy app available for android built on the React Native platform with a python server as the back end. This is a completely open-source service which is open to everyone for [contributing](https://github.com/firstcontributions/first-contributions/blob/master/README.md) and improving. Know more about the app at our [official website](https://flashgrab.github.io)
 
 <a href="https://play.google.com/store/apps/details?id=com.flashgrab"><img src="https://github.com/vishal-ds/FlashGrab/blob/master/.github/Screenshots/playstore.png?raw=true" ></a>
 
 ## Screenshots
-<a><img src="https://github.com/vishal-ds/FlashGrab/blob/master/.github/Screenshots/AddSale.jpg?raw=true" height="420" width="200" ></a>
-<a><img src="https://github.com/vishal-ds/FlashGrab/blob/master/.github/Screenshots/Fingerprint.jpg?raw=true" height="420" width="200" ></a>
-<a><img src="https://github.com/vishal-ds/FlashGrab/blob/master/.github/Screenshots/Light.jpg?raw=true" height="420" width="200" ></a>
-<a><img src="https://github.com/vishal-ds/FlashGrab/blob/master/.github/Screenshots/applock.jpg?raw=true" height="420" width="200" ></a>
+<a><img src="https://github.com/vishal-ds/FlashGrab/blob/beta/.github/Screenshots/AddSale.png?raw=true" height="420" width="300" ></a>
+<a><img src="https://github.com/vishal-ds/FlashGrab/blob/beta/.github/Screenshots/Details.png?raw=true" height="420" width="200" ></a>
+<a><img src="https://github.com/vishal-ds/FlashGrab/blob/beta/.github/Screenshots/Instruction.png?raw=true" height="420" width="200" ></a>
+<a><img src="https://github.com/vishal-ds/FlashGrab/blob/beta/.github/Screenshots/Settings.png?raw=true" height="420" width="200" ></a>
+
+## To-Do
+* Build a node server from scratch
+* Implement animations in Instructions and Schedule Sale pages.
+* Switch to FastLane if possible
+* Complete live updation for instructions
 
 ## Credits & Mentions
 FlashGrab was not entirely developed from the ground up by me. Here are some other people who deserve a special mention and/or share the credit of this service's development
@@ -182,7 +193,6 @@ If issues still persist after following the instructions and trying these possib
 ### Known bugs
  * The node module `react-native-dark-mode` has been deprecated. That's why it's behaving like trash and conflicting with new installs. This is the purpose of `manager.sh` even existing in this repo in the first place. The developer has replaced this with `react-native-dynamic` but this is not working with `react-native@0.63.3` as stated in [this issue](https://github.com/codemotionapps/react-native-dynamic/issues/18). Although this is marked as working and closed, it still doesn't work. And, `react-native init FlashGrab --version 0.62.0` crashes due to a dependency conflict in `eslint`. If you can fix this, I can get rid of `manager.sh` and make the development process a lot easier.
  * Although `app.py` handles Flipkart fine at the moment, their rapidly changing source code occassionally breaks it. I haven't been able to implement 100% scraping in the script to make it consistent. Any attempts to convert it to 100% scraping by using stuff like `find_element_by_xpath()` is as important as a bug fix.
-
 ## Directory Structure
   ```
   |
@@ -208,11 +218,3 @@ If issues still persist after following the instructions and trying these possib
 ## Tips
  * When building any new UI elements and coloring them, try to use the value `global.accent` for the color always to make your element match the rest of the app. This variable is defined in `src/accents.js`.
  * For changing the accent color, refer to `src/accents.js` itself
-
-## Support
-I'm a very young developer with less knowledge and experience. It would be great if you could:
- * help me optimize the code, especially back end
- * help add new features and fix bugs that may arise
- * spread the word about the app and it's open and transparent nature
- * help reduce the natural shady doubts that people have about the app handling their sensitive data
- * [donate](https://paypal.me/vishalds) to support me

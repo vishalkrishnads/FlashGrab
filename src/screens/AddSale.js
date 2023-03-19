@@ -1,326 +1,423 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, ScrollView, Keyboard, Image, SafeAreaView, Alert, Vibration, Dimensions } from 'react-native';
-import { Button, Icon } from 'react-native-elements';
-import { TextField } from 'react-native-material-textfield';
+import React from 'react'
+import { View, Text, TouchableOpacity, TouchableWithoutFeedback, Animated, Linking } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import { useDynamicStyleSheet, useDarkMode } from 'react-native-dark-mode'
+import { OutlinedTextField } from 'rn-material-ui-textfield'
+import { URL } from 'react-native-url-polyfill';
+import { WebView } from 'react-native-webview'
 import { openDatabase } from 'react-native-sqlite-storage';
-import { DynamicStyleSheet, useDynamicStyleSheet, useDarkMode } from 'react-native-dark-mode';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
-import {URL} from 'react-native-url-polyfill';
-import ProgressBar from 'react-native-progress/Bar';
-import styles from '../assets/styles'
+import MaterialIcon from 'react-native-vector-icons/MaterialIcons'
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
+import dynamicStyles from '../assets/styles/AddSale'
+import Parser from '../assets/misc/parser'
+import LoadingAnimation from '../assets/misc/animation';
+import AdView from '../assets/misc/AdView'
+import { KEYS } from '@env'
 
-var PushNotification = require("react-native-push-notification");
-var moment = require('moment');
+var CryptoJS = require("crypto-js");
 var db = openDatabase({ name: 'FlashGrab.db' });
-const Schedule_Sale = ({ route, navigation }) => {
-  global.product_name = "Some good product. But no internet for me to know. Delete this and try again with a nice internet connection.";
-  //real date
-  let [DateTime, setDateTime] = useState('');
-  //display dates
-  let [dat, setDate] = useState('');
-  let [tim, setTime] = useState('');
-  let [product, setProduct] = useState('');
-  let [username, setUserName] = useState('');
-  const uname = useRef(null);
-  let [password, setPassword] = useState('');
-  const pass = useRef(null);
-  let [cvv, setCVV] = useState('');
-  const cv = useRef(null);
-  let [pin, setPIN] = useState('');
-  const PIN = useRef(null)
-  let [error_1, setError1] = useState('');
-  let [error_2, setError2] = useState('');
-  let [error_3, setError3] = useState('');
-  let [error_4, setError4] = useState('');
-  let [error_5, setError5] = useState('');
-  let [error_6, setError6] = useState(false);
-  let [saver, showSaver] = useState(false);
-  let [masked, mask] = useState(true);
-  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
-  useEffect(() => {
-    //Accept shared link, if any
-    const { placeholder } = route.params;
-    if (!placeholder) {
-      return;
-    } else {      //Both sellers' Android apps share product names along with URL
-      //we'll first pop out the last word. Yay, got it. But no....
-      var temp1 = placeholder.split(" ").pop();
-      //They actually type <product name> [ENTER] <URL>. So, we'll have to pop that out too
-      var temp = temp1.split('\n').pop();
-      //now we have the URL.
-      setProduct(temp);
-      //we'll also store the product's name for doing something else later.
-      product_name = placeholder.substring(0, placeholder.lastIndexOf(" "));
+var moment = require('moment')
+const AddSale = ({ navigation, route }) => {
+    const styles = useDynamicStyleSheet(dynamicStyles)
+    const isDarkMode = useDarkMode()
+    const fadeAnim = React.useRef(new Animated.Value(1)).current;
+    let [index, set_index] = React.useState([true, false, false, false, false])
+    let [url, seturl] = React.useState('');
+    let [seller, set_seller] = React.useState('')
+    let [username, set_username] = React.useState('')
+    let [password, set_password] = React.useState('')
+    let [DateTime, setDateTime] = React.useState('')
+    let [payment_method, set_method] = React.useState("COD")
+    let [name, set_name] = React.useState('')
+    let [price, set_price] = React.useState('')
+    let [image, set_image] = React.useState('')
+    let [cvv, set_cvv] = React.useState('')
+    let [upi, set_upi] = React.useState('')
+
+    // This useEffect hook is present only to act as a bug fix. For explanation, refer to the bottom <WebView/> code
+    React.useEffect(() =>
+        navigation.addListener('beforeRemove', (e) => {
+            e.preventDefault();
+            seturl('')
+            navigation.dispatch(e.data.action)
+        }),
+        []
+    );
+
+    React.useEffect(() => {
+        /*
+        This timer was also added here to fix the <WebView/> bug.
+        If we set the URL as soon as screen mounts, it renders the <WebView/> along with it causing the app to crash.
+        The obvious fix is to give some time for the rest of the components to render, and then render the <WebView/> after it.
+        */
+        setTimeout(() => {
+            const { placeholder } = route.params;
+            seturl(placeholder)
+        }, 1000)
+    }, [])
+
+    const animate = () => {
+        Animated.timing(fadeAnim, {
+            toValue: 0,
+            duration: 1000,
+            useNativeDriver: true
+        }).start(() => Animated.timing(fadeAnim, {
+            toValue: 1,
+            duration: 1000,
+            useNativeDriver: true
+        }).start(() => animate()));
     }
-  })
 
-  //date picker state hook functions
-  const showDatePicker = () => {
-    Keyboard.dismiss();
-    setDatePickerVisibility(true);
-  };
-  //confirm date function
-  function handleConfirm(date) {
-    setDatePickerVisibility(false);
-    if (date < new Date()) { setError6(true) }
-    if (date > new Date() && error_6 === true) { setError6(false) }
-    setDateTime(date);
-    setDate(moment(date).format("dddd, MMMM Do YYYY"));
-    setTime(moment(date).format("h:mm a").toUpperCase());
-  }
-  
-  //schedule notification function.
-  const notify = (ID, productname) => {
-    PushNotification.localNotificationSchedule({
-      id: ID,
-      smallIcon: "ic_notification",
-      title: "Reminder",
-      subText: "Sale Reminder",
-      bigText: ("Your sale of " + productname + " will begin shortly! Get back in quickly or ignore if you deleted the sale in app."),
-      message: "Your sale will begin shortly. Get back in...",
-      date: DateTime,
-      allowWhileIdle: true,
-    });
-  }
+    const switch_to = (value) => {
+        var temp = [false, false, false, false, false]
+        if (value === "back") {
+            temp[index.indexOf(true) - 1] = true
+        } else if (value === "next") {
+            temp[index.indexOf(true) + 1] = true
+        }
+        set_index(temp)
+    }
 
-  const URLError = (label, alert) => {
-    showSaver(false);
-        Vibration.vibrate([100, 100, 100, 100]);
-        setError1(label)
-        Alert.alert(
-          'Sorry', alert,
-          [
-            {
-              text: 'Okay'
+    const parseHTML = (html) => {
+        if (!html || html === "<head></head><body></body>") { }
+        else {
+            var parser = new Parser(html)
+            var data = parser.data(seller)
+            set_name(data[0])
+            set_price(data[1])
+            set_image(data[2])
+        }
+
+    }
+
+    // const notify = (id) => {
+    //     PushNotification.localNotificationSchedule({
+    //         id: id,
+    //         channelId: "channel-id",
+    //         smallIcon: "ic_notification",
+    //         title: "Reminder",
+    //         subText: "Sale Reminder",
+    //         bigText: ("Your sale of " + name + " will begin shortly! Get back in quickly or ignore if you deleted the sale in app."),
+    //         message: "Your sale will begin shortly. Get back in...",
+    //         date: DateTime,
+    //         allowWhileIdle: true,
+    //     });
+    // }
+
+    const schedule = () => {
+        switch_to("next")
+        animate()
+        while (!name || !price || !image) { }
+        db.transaction(function (tx) {
+            tx.executeSql(
+                'INSERT INTO sales (url, username, password, payment_method, payment_data, seller, date, title, price, image) VALUES (?,?,?,?,?,?,?,?,?,?)',
+                [url, CryptoJS.AES.encrypt(username.toString(), KEYS).toString(), CryptoJS.AES.encrypt(password.toString(), KEYS).toString(), payment_method, payment_method === "Card" ? CryptoJS.AES.encrypt(cvv.toString(), KEYS).toString() : payment_method === "UPI" ? CryptoJS.AES.encrypt(upi.toString(), KEYS).toString() : null, seller, DateTime.toISOString(), name, price, image],
+                (tx, result) => {
+                    // notify(result.insertId)
+                    seturl('')
+                    navigation.navigate('Home');
+                }
+            );
+        });
+    }
+
+    //section to enter URL's
+    const URLSelector = () => {
+        let [error, set_error] = React.useState('')
+        let [input, set_input] = React.useState(url)
+        const check = () => {
+            if (!input) { set_error("Please enter a URL") }
+            else {
+                try {
+                    const link = new URL(input)
+                    if (link.host === "flipkart.com" || link.host === "dl.flipkart.com" || link.host === "www.flipkart.com" || link.host === "www.dl.flipkart.com") {
+                        set_seller("Flipkart")
+                        seturl(input)
+                        switch_to("next")
+                    } else if (link.host === "amazon.in" || link.host === "www.amazon.in") {
+                        set_seller("Amazon")
+                        seturl(input)
+                        switch_to("next")
+                    } else { set_error("Sorry, unsupported seller") }
+                } catch {
+                    set_error('Please enter a valid URL')
+                }
             }
-          ],
+        }
+        return (
+            <View style={{ flex: 4 }}>
+                <View style={{ flex: 5, margin: 20 }}>
+                    <View style={{ flex: 1 }}>
+                        <View style={{ flex: 3 }}>
+                            <OutlinedTextField
+                                label="Enter URL"
+                                onChangeText={input => set_input(input)}
+                                onSubmitEditing={check}
+                                defaultValue={url}
+                                tintColor={global.accent}
+                                returnKeyType="next"
+                                textColor={isDarkMode ? "white" : "black"}
+                                baseColor={isDarkMode ? "#f2f2f2" : "black"}
+                                error={error}
+                            />
+                            <Text style={styles.instruction}>Enter or share the URL of a product from the seller app/website to begin</Text>
+                        </View>
+                        <View style={{ flex: 2 }}></View>
+                    </View>
+                </View>
+                <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end' }}>
+                    <View style={{ flex: 8 }}></View>
+                    <TouchableOpacity onPress={() => check()} style={[styles.button, { backgroundColor: global.accent }]}><Text style={styles.button_text}>Next</Text></TouchableOpacity>
+                </View>
+            </View>
         );
-  }
+    }
 
-  //event triggered on "Schedule Sale" button press
-  const save_sale = () => {
-    Keyboard.dismiss();
-    if (error_6 === true) {
-      Alert.alert(
-        "Can't do that",
-        "You have picked a date and/or time that has already passed. You can only use FlashGrab for upcoming sales."
-      );
-      Vibration.vibrate([100, 100, 100, 100]);
-      return;
-    }
-    if (!product || !username || !password || !cvv || !pin || !DateTime) {
-      if (!product) {
-        setError1("This can't be empty")
-      }
-      if (!username) {
-        setError2("Enter your account username for seller site");
-      }
-      if (!password) {
-        setError3("Enter your account password for seller site");
-      }
-      if (!cvv) {
-        setError4("Enter the CVV for your payment method");
-      }
-      if (!pin) {
-        setError5("Enter the PIN Code of your saved address")
-      }
-      if (!DateTime) {
-        setError6(true);
-      }
-      Vibration.vibrate([100, 100, 100, 100]);
-      return;
-    }
-    showSaver(true);
-    try{
-      const urlParts = new URL(product);
-      var seller;
-      if (urlParts.host === "www.flipkart.com" || urlParts.host === "www.dl.flipkart.com" || urlParts.host === "flipkart.com" || urlParts.host === "dl.flipkart.com") {
-        seller = "Flipkart";
-      } else if (urlParts.host === "www.amazon.in" || urlParts.host === "amazon.in") {
-        seller = "Amazon";
-      }
-      else if (urlParts.host === "www.amazon.com" || urlParts.host === "amazon.com") {
-        URLError("Amazon India only", "FlashGrab doesn't support buying from Amazon international. This is an India only app and supports only Amazon India.")
-        return;
-      }
-      else {
-        URLError("Unsupported seller", "FlashGrab doesn't support buying from this site at the moment. Please try with another site or please wait for FlashGrab to support it in the future.")
-        return;
-      }
-    }catch{
-      URLError("Something's fishy here", "There seems to be a problem. Maybe your URL isn't a complete or proper URL? Please recheck whether it begins with 'https://www.' to confirm.")
-      return;
-    }
-    //fetch the item details
-    async function findproduct() {
-      var DomParser = require('dom-parser');
-      var parser = new DomParser()
-      const html = (await (await fetch(product)).text()); // html as text
-      var dom = parser.parseFromString(html);
-      //since both supported sellers display items as <title> in their websites,
-      //we load the HTML pages into memory, we extract & use <title> to identify product name ;)
-      const name = dom.getElementsByTagName("TITLE")[0].innerHTML;
-      return name;
-    }
-    findproduct().then((name) => {
-      product_name = name;
-      const time = DateTime.toISOString();
-      db.transaction(function (tx) {
-        tx.executeSql(
-          'INSERT INTO table_sales (product_name, url, username, password, pin, cvv, seller, date) VALUES (?,?,?,?,?,?,?,?)',
-          [product_name, product, username, password, pin, cvv, seller, time],
-          (result) => {
-            notify(result.insertId, product_name);
-            navigation.navigate('Home');
-          }
-        );
-      });
-    }).catch(() => {
-      //if it's rejected for some reason, write the name we got earlier from the sharing app
-      const time = DateTime.toISOString();
-      db.transaction(function (tx) {
-        tx.executeSql(
-          'INSERT INTO table_sales (product_name, url, username, password, pin, cvv, seller, date) VALUES (?,?,?,?,?,?,?,?)',
-          [product_name, product, username, password, pin, cvv, seller, time],
-          (result) => {
-            notify(result.insertId, product_name);
-            navigation.navigate('Home');
-          }
-        );
-      });
-    })
-  };
-  const isDarkMode = useDarkMode();
-  const style = useDynamicStyleSheet(new DynamicStyleSheet(styles));
-  return (
-    <SafeAreaView style={style.root}>
-      <View style={{ flex: 1 }}>
-        {saver ? <ProgressBar width={500} height={3} color={global.accent} indeterminate={true} borderRadius={0} useNativeDriver={true} borderWidth={0} /> : null}
-        <View style={style.saleForm}>
-          <ScrollView keyboardShouldPersistTaps='always' keyboardDismissMode='on-drag' showsVerticalScrollIndicator={false}>
-            <View>
-              <Text style={[style.headings, { marginBottom: 10 }]}>SUPPORTED SITES</Text>
-            </View>
-            <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-              <Image
-                style={{ borderRadius: 50, width: 100, height: 100 }}
-                source={require('../assets/img/flipkart.png')}
-              />
-              <Image
-                style={{ borderRadius: 50, marginLeft: 20, width: 100, height: 100 }}
-                source={require('../assets/img/amazon.webp')}
-              />
-            </View>
-            <View>
-              <Text style={[style.headings, { marginTop: 20 }]}>SALE DETAILS</Text>
-            </View>
-            <View style={{ marginLeft: 5, marginRight: 5 }}>
-              <TextField
-                label='Product URL'
-                onChangeText={product => setProduct(product)}
-                onSubmitEditing={() => { uname.current.focus(); }}
-                defaultValue={product}
-                textContentType='URL'
-                returnKeyType="next"
-                tintColor={global.accent}
-                textColor={isDarkMode ? "white" : "black"}
-                baseColor={isDarkMode ? "#f2f2f2" : "black"}
-                error={error_1}
-              />
-              <TextField
-                ref={uname}
-                label='Username'
-                onChangeText={username => setUserName(username)}
-                defaultValue={username}
-                onSubmitEditing={() => { pass.current.focus() }}
-                returnKeyType="next"
-                keyboardType="email-address"
-                tintColor={global.accent}
-                textColor={isDarkMode ? "white" : "black"}
-                baseColor={isDarkMode ? "#f2f2f2" : "black"}
-                error={error_2} />
-              <View style={{ flexDirection: 'row' }}>
-                <View style={{ width: (Dimensions.get('window').width) - 70 }}>
-                  <TextField
-                    ref={pass}
-                    label='Password'
-                    onChangeText={password => setPassword(password)}
-                    defaultValue={password}
-                    onSubmitEditing={() => { cv.current.focus() }}
-                    textContentType='password'
-                    returnKeyType="next"
-                    secureTextEntry={masked}
-                    tintColor={global.accent}
-                    textColor={isDarkMode ? "white" : "black"}
-                    baseColor={isDarkMode ? "#f2f2f2" : "black"}
-                    error={error_3}
-                  />
+    const Account = () => {
+        let [input_1, setinput_1] = React.useState(username)
+        let [input_2, setinput_2] = React.useState(password)
+        let [error_1, seterror_1] = React.useState('')
+        let [error_2, seterror_2] = React.useState('')
+        const field = React.useRef(null)
+        const check = () => {
+            if (!input_1 || !input_2) {
+                if (!input_1) { seterror_1('Please enter a username') }
+                if (!input_2) { seterror_2('Please enter a password') }
+            } else {
+                set_username(input_1)
+                set_password(input_2)
+                switch_to("next")
+            }
+        }
+        return (
+            <View style={{ flex: 4 }}>
+                <View style={{ flex: 5, margin: 20 }}>
+                    <View style={{ flex: 1 }}>
+                        <View style={{ flex: 3 }}>
+                            <OutlinedTextField
+                                label="Enter username"
+                                onChangeText={input_1 => setinput_1(input_1)}
+                                onSubmitEditing={() => field.current.focus()}
+                                returnKeyType="next"
+                                defaultValue={username}
+                                tintColor={global.accent}
+                                textColor={isDarkMode ? "white" : "black"}
+                                baseColor={isDarkMode ? "#f2f2f2" : "black"}
+                                error={error_1}
+                            />
+                            <Text style={styles.instruction}>Enter the username of your {seller} account to be used for the purchase.</Text>
+                            <OutlinedTextField
+                                ref={field}
+                                label="Enter password"
+                                onChangeText={input_2 => setinput_2(input_2)}
+                                onSubmitEditing={check}
+                                returnKeyType="next"
+                                defaultValue={password}
+                                tintColor={global.accent}
+                                textColor={isDarkMode ? "white" : "black"}
+                                baseColor={isDarkMode ? "#f2f2f2" : "black"}
+                                error={error_2}
+                            />
+                            <Text style={styles.instruction}>Enter the login password of your {seller} account. This is stored securely and isn't shared with anyone else.</Text>
+                        </View>
+                        <View style={{ flex: 2 }}></View>
+                    </View>
                 </View>
-                <View style={{ marginTop: 10 }}>
-                  <Button
-                    buttonStyle={{ marginTop: 8, backgroundColor: 'transparent' }}
-                    onPress={() => mask(previousState => !previousState)}
-                    icon={
-                      <Icon name={masked ? 'visibility-off' : 'visibility'} type='material' size={30} color='gray' />
-                    }
-                  />
+                <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end' }}>
+                    <View style={{ flex: 8 }}></View>
+                    <TouchableOpacity onPress={() => switch_to("back")} style={[styles.button, { backgroundColor: global.accent }]}><Text style={styles.button_text}>Back</Text></TouchableOpacity>
+                    <TouchableOpacity onPress={() => check()} style={[styles.button, { backgroundColor: global.accent }]}><Text style={styles.button_text}>Next</Text></TouchableOpacity>
                 </View>
-              </View>
-              <TextField
-                ref={cv}
-                label="CVV"
-                onChangeText={cvv => setCVV(cvv)}
-                onSubmitEditing={() => { PIN.current.focus() }}
-                defaultValue={cvv}
-                returnKeyType="next"
-                secureTextEntry={true}
-                secureTextEntry keyboardType='number-pad'
-                maxLength={3}
-                tintColor={global.accent}
-                textColor={isDarkMode ? "white" : "black"}
-                baseColor={isDarkMode ? "#f2f2f2" : "black"}
-                error={error_4} />
-              <TextField
-                ref={PIN}
-                label="PIN Code"
-                onChangeText={pin => setPIN(pin)}
-                defaultValue={pin}
-                returnKeyType="next"
-                onSubmitEditing={showDatePicker}
-                keyboardType='decimal-pad'
-                maxLength={6}
-                tintColor={global.accent}
-                textColor={isDarkMode ? "white" : "black"}
-                baseColor={isDarkMode ? "#f2f2f2" : "black"}
-                error={error_5} />
-              <View style={error_6 ? [style.datetimefield, { borderBottomColor: 'rgb(213, 0, 0)', borderBottomWidth: 2 }] : style.datetimefield}>
-                <TouchableWithoutFeedback style={style.datetime} onPress={showDatePicker}>
-                  <View style={{ alignItems: 'flex-start' }}>
-                    <Text style={error_6 ? { fontSize: 18, color: 'rgb(213, 0, 0)' } : style.datetimetext}>Date: {dat}</Text>
-                    <Text style={error_6 ? { fontSize: 18, color: 'rgb(213, 0, 0)' } : style.datetimetext}>Time: {tim}</Text>
-                  </View>
+            </View >
+
+        );
+    }
+
+    const Payments = () => {
+        let [active, setactive] = React.useState(payment_method)
+        let [input_1, setinput_1] = React.useState(cvv)
+        let [input_2, setinput_2] = React.useState(upi)
+        let [error_1, seterror_1] = React.useState('')
+        let [error_2, seterror_2] = React.useState('')
+        const check = () => {
+            set_method(active)
+            if (payment_method === "Card") {
+                if (!input_1) { seterror_1('Please enter your CVV') }
+                else { set_cvv(input_1); switch_to("next") }
+            } else if (payment_method === "UPI") {
+                if (!input_2) { seterror_2('Please enter your UPI ID') }
+                else { set_upi(input_2); switch_to("next") }
+            } else { switch_to("next") }
+        }
+        const SegmentedControl = ({ value }) => {
+            return (
+                <TouchableWithoutFeedback onPress={() => setactive(value)}>
+                    <View style={[styles.segmented_control, { backgroundColor: active === value ? global.accent : isDarkMode ? '#333333' : '#f2f2f2' }]}>
+                        <Text style={[styles.segmented_control_text, { color: active === value ? 'white' : global.accent }]}>{value}</Text>
+                    </View>
                 </TouchableWithoutFeedback>
-              </View>
-              {error_6 ? <Text style={{ color: 'rgb(213, 0, 0)', fontSize: 12, fontWeight: '100' }}> Check this once more</Text> : null}
-              <View>
-                <DateTimePickerModal
-                  isDarkModeEnabled={true}
-                  isVisible={isDatePickerVisible}
-                  mode="datetime"
-                  onConfirm={handleConfirm}
-                  onCancel={() => setDatePickerVisibility(false)}
-                />
-              </View>
-              <View style={{ marginTop: 10, marginBottom: 20 }}>
-                <Button buttonStyle={{ backgroundColor: global.accent }} title="Schedule Sale" onPress={save_sale} />
-              </View>
+            );
+        }
+        return (
+            <View style={{ flex: 4 }}>
+                <View style={{ flex: 5 }}>
+                    <View style={{ flex: 2, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+                        <SegmentedControl value="COD" />
+                        <SegmentedControl value="Card" />
+                        <SegmentedControl value="UPI" />
+                    </View>
+                    <View style={{ flex: 3, margin: 20 }}>
+                        {active === "COD" ? <View style={{ margin: 10, alignItems: 'center', justifyContent: 'center' }}>
+                            <Text style={styles.instruction}>We'll select the Cash-on-Delivery (COD) option as payment method during checkout.</Text>
+                        </View> : null}
+                        {active === "Card" ? <View style={{ flex: 1 }}>
+                            <OutlinedTextField
+                                label="Enter CVV"
+                                onChangeText={input_1 => setinput_1(input_1)}
+                                returnKeyType="next"
+                                defaultValue={cvv}
+                                returnKeyType="next"
+                                secureTextEntry={true}
+                                secureTextEntry keyboardType='number-pad'
+                                tintColor={global.accent}
+                                textColor={isDarkMode ? "white" : "black"}
+                                baseColor={isDarkMode ? "#f2f2f2" : "black"}
+                                error={error_1}
+                            />
+                            <Text style={styles.instruction}>Enter the CVV of the debit card that you've saved in you {seller} account for purchase.</Text>
+                        </View> : null}
+                        {active === "UPI" ? <View style={{ flex: 1 }}>
+                            <OutlinedTextField
+                                label="Enter UPI ID"
+                                onChangeText={input_2 => setinput_2(input_2)}
+                                returnKeyType="next"
+                                defaultValue={upi}
+                                returnKeyType="next"
+                                tintColor={global.accent}
+                                textColor={isDarkMode ? "white" : "black"}
+                                baseColor={isDarkMode ? "#f2f2f2" : "black"}
+                                error={error_2}
+                            />
+                            <Text style={styles.instruction}>Enter your UPI ID for the purchase. Please be online to complete the transaction during the time of purchase.</Text>
+                        </View> : null}
+                    </View>
+                </View>
+                <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end' }}>
+                    <View style={{ flex: 8 }}></View>
+                    <TouchableOpacity onPress={() => switch_to("back")} style={[styles.button, { backgroundColor: global.accent }]}><Text style={styles.button_text}>Back</Text></TouchableOpacity>
+                    <TouchableOpacity onPress={() => check()} style={[styles.button, { backgroundColor: global.accent }]}><Text style={styles.button_text}>Next</Text></TouchableOpacity>
+                </View>
             </View>
-          </ScrollView>
-        </View>
-      </View>
-    </SafeAreaView>
-  );
-};
+        );
+    }
 
-export default Schedule_Sale;
+    const Datetime = () => {
+        let [date, set_date] = !DateTime ? React.useState("Choose a date") : React.useState(moment(DateTime).format("MMMM Do, YYYY"))
+        let [time, set_time] = !DateTime ? React.useState("Choose a time") : React.useState(moment(DateTime).format("h:mm a").toUpperCase())
+        let [visibility, set_visibility] = React.useState(false)
+        let [error, set_error] = React.useState('')
+        const check = (value) => {
+            set_visibility(false)
+            setDateTime('')
+            if (value < new Date()) { set_error('Date/time has already passed') }
+            else if (value > new Date()) {
+                setDateTime(value);
+                set_error('')
+            }
+            set_date(moment(value).format("MMMM Do, YYYY"));
+            set_time(moment(value).format("h:mm a").toUpperCase());
+        }
+        const verify = () => { if (!DateTime) { set_error('Please pick a date & time') } else { schedule() } }
+        return (
+            <View style={{ flex: 4 }}>
+                <View style={{ flex: 5, margin: 20 }}>
+                    <TouchableWithoutFeedback onPress={() => set_visibility(true)}>
+                        <View style={{ flex: 1, margin: 10 }}>
+                            <View style={[styles.date_container, { borderColor: error ? 'rgb(213, 0, 0)' : styles.date_container.borderColor }]}>
+                                <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                                    <MaterialIcon name="calendar-today" style={[styles.icon, { color: error ? 'rgb(213, 0, 0)' : styles.icon.color }]} />
+                                    <Text style={[styles.icon_caption, { color: error ? 'rgb(213, 0, 0)' : styles.icon_caption.color }]}>{date}</Text>
+                                </View>
+                                <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                                    <Icon name="clock" style={[styles.icon, { color: error ? 'rgb(213, 0, 0)' : styles.icon.color }]} />
+                                    <Text style={[styles.icon_caption, { color: error ? 'rgb(213, 0, 0)' : styles.icon_caption.color }]}>{time}</Text>
+                                </View>
+                            </View>
+                            <View style={{ flex: 1, flexDirection: 'row' }}>
+                                <View style={{ flex: 1 }}></View>
+                                <View style={{ flex: 10 }}><Text style={styles.error}>{error}</Text></View>
+                                <View style={{ flex: 1 }}></View>
+                            </View>
+                        </View>
+                    </TouchableWithoutFeedback>
+                    <View style={{ flex: 1, margin: 10 }}>
+                        <Text style={styles.instruction}>Tell us the date & time of this sale using the selector above and we'll remind you then.</Text>
+                        <DateTimePickerModal
+                            isDarkModeEnabled={true}
+                            isVisible={visibility}
+                            mode="datetime"
+                            onConfirm={check}
+                            onCancel={() => set_visibility(false)}
+                        />
+                    </View>
+                </View>
+                <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end' }}>
+                    <View style={{ flex: 8 }}></View>
+                    <TouchableOpacity onPress={() => switch_to("back")} style={[styles.button, { backgroundColor: global.accent }]}><Text style={styles.button_text}>Back</Text></TouchableOpacity>
+                    <TouchableOpacity onPress={() => verify()} style={[styles.button, { backgroundColor: global.accent }]}><Text style={styles.button_text}>Schedule</Text></TouchableOpacity>
+                </View>
+            </View>
+        );
+    }
+
+    return (
+        <SafeAreaView style={styles.root}>
+            <View style={{ flex: 1, alignItems: 'center', flexDirection: 'row', justifyContent: 'center' }}>
+                <View style={{ flex: 2 }}></View>
+                <Text style={styles.heading}>Schedule A Sale</Text>
+                <View style={{ flex: 1, alignItems: 'flex-end', justifyContent: 'center' }}>
+                    <TouchableOpacity onPress={() => Linking.openURL('flashgrab.github.io')}><Icon name="web" size={global.width / 15} color={'gray'} /></TouchableOpacity>
+                </View>
+                <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                    <TouchableOpacity onPress={() => navigation.navigate("Instructions")}><Icon name="comment-question" size={global.width / 15} color={'gray'} /></TouchableOpacity>
+                </View>
+            </View>
+            {index[4] ? <View style={{ flex: 8, alignItems: 'center' }}>
+                <View style={{ flex: 1 }}></View>
+                <View style={{ flex: 4 }}>
+                    <LoadingAnimation opacity={fadeAnim} />
+                </View>
+            </View>
+                : <View style={{ flex: 8 }}>
+                    <View style={styles.gallery}>
+                        <AdView type="video" media={true}/>
+                    </View>
+                    <View style={{ flex: 5 }}>
+                        {index[0] ? <URLSelector /> : null}
+                        {index[1] ? <Account /> : null}
+                        {index[2] ? <Payments /> : null}
+                        {index[3] ? <Datetime /> : null}
+                    </View>
+                </View>}
+            {/*
+            A bug is persistent with react-native-webview where a <WebView/> can't be wrapped a parent <View>, or else the whole app will crash when navigating.
+            But, we have to wrap it like so to avoid it from showing up on the screen.
+
+            The fix: We only render the <WebView/> along with parent <View> if the url has been entered. If someone navigates back after entering the URL in the 
+                     textfield, we'll use that useEffect hook at the top to catch the navigation event and we'll immediately clear the url state hook to make the <WebView/>
+                     "vanish", thus magically avoiding the whole app from crashing ;)
+            */}
+            {url ? <View style={{ flex: 0 }}>
+                <WebView
+                    style={{ height: 0 }}
+                    source={{ uri: !index[0] ? url : '' }}
+                    injectedJavaScript={`setTimeout(function () {window.ReactNativeWebView.postMessage(document.getElementsByTagName('html')[0].innerHTML);}, 1000)`}
+                    onMessage={(event) => parseHTML(event.nativeEvent.data)}
+                />
+            </View> : null}
+        </SafeAreaView>
+    );
+}
+
+export default AddSale

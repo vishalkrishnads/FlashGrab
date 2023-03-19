@@ -1,0 +1,35 @@
+{
+  "name": "flashgrab-server",
+  "version": "0.0.1",
+  "description": "Server of the FlashGrab app",
+  "main": "app.js",
+  "scripts": {
+    "test": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vishalkrishnads/FlashGrab.git"
+  },
+  "keywords": [
+    "web",
+    "scraping",
+    "flash",
+    "sales"
+  ],
+  "author": "Vishal DS",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/vishalkrishnads/FlashGrab/issues"
+  },
+  "homepage": "https://github.com/vishalkrishnads/FlashGrab#readme",
+  "dependencies": {
+    "crypto-js": "^3.3.0",
+    "dotenv": "^9.0.2",
+    "express": "^4.17.1",
+    "worker-threads": "^1.0.0",
+    "ws": "^7.4.5"
+  },
+  "devDependencies": {
+    "playwright": "^1.11.0"
+  }
+}
