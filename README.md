@@ -1,7 +1,8 @@
 # FlashGrab
 
 > :warning: This was my first open-source project and has since been shut down.
-> :no-entry: Development was halted and repository has been archived
+> 
+> :no_entry: Development was halted and repository has been archived
 
 FlashGrab is your one-stop solution for flash sales. This is an autobuy app available for android built on the React Native platform with a python server as the back end. This is a completely open-source service which is open to everyone for [contributing](https://github.com/firstcontributions/first-contributions/blob/master/README.md) and improving. Know more about the app at our [official website](https://flashgrab.github.io)
 
